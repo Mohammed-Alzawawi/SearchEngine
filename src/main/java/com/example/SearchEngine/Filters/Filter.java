@@ -6,5 +6,5 @@ import java.util.List;
 
 public interface Filter {
 
-    public List<Token> filter(Token token) ;
+    List<Token> filter(Token token);
 }

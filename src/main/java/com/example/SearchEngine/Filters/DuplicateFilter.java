@@ -6,10 +6,11 @@ import java.util.List;
 
 public class DuplicateFilter implements Filter {
 
-    public DuplicateFilter() {}
+    public DuplicateFilter() {
+    }
 
     @Override
     public List<Token> filter(Token token) {
-        return List.of(token , token) ;
+        return List.of(token, token);
     }
 }

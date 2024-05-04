@@ -2,23 +2,29 @@ package com.example.SearchEngine.Analyzers;
 
 import com.example.SearchEngine.Filters.Filter;
 import com.example.SearchEngine.Tokenization.Token;
+import com.example.SearchEngine.Tokenization.Tokenizer;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class SimpleAnalyzer implements Analyzer {
+public class SimpleAnalyzer extends Analyzer {
 
-    public  SimpleAnalyzer(){} ;
+    public SimpleAnalyzer(Tokenizer tokenizer, List<Filter> filters) {
+        this.tokenizer = tokenizer;
+        this.filters = filters;
+    }
 
     @Override
-    public List<Token> analyze(List<Token> tokens, List<Filter> filters) {
-        for(Filter filter : filters) {
-            List<Token> cur = new ArrayList<>() ;
+    public List<Token> analyze(String text, Double weight) {
+        List<Token> tokens = tokenizer.tokenize(text, weight);
+
+        for (Filter filter : filters) {
+            List<Token> current = new ArrayList<>();
             for (Token token : tokens) {
-               filter.filter(token).stream().forEach(i -> cur.add(i));
+                filter.filter(token).stream().forEach(filterdToken -> current.add(filterdToken));
             }
-            tokens = cur ;
+            tokens = current;
         }
-        return  tokens;
+        return tokens;
     }
 }

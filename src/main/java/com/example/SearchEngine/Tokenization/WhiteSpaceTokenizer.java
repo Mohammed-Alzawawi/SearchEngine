@@ -3,29 +3,28 @@ package com.example.SearchEngine.Tokenization;
 import java.util.ArrayList;
 import java.util.List;
 
-public class WhiteSpaceTokenizer implements Tokenizer{
+public class WhiteSpaceTokenizer implements Tokenizer {
 
-    public WhiteSpaceTokenizer() {}
+    public WhiteSpaceTokenizer() {
+    }
 
     @Override
-    public List<Token> tokenize(String text , Double weight ) {
-        List<Token> tokens = new ArrayList<>() ;
-        String cur ="" ;
-        int index = 0 ;
+    public List<Token> tokenize(String text, Double weight) {
+        List<Token> tokens = new ArrayList<>();
+        StringBuilder current = new StringBuilder();
+        int index = 0;
 
-        for (int i = 0 ; i < text.length() ; i++ ) {
-            if ( Character.isWhitespace(text.charAt(i)) ) {
-                if (cur.length() > 2 )
-                    tokens.add(new Token(cur , weight , index)) ;
-                index = i +1 ;
-                cur = "" ;
+        for (int i = 0; i < text.length(); i++) {
+            if (Character.isWhitespace(text.charAt(i))) {
+                if (current.length() > 2) tokens.add(new Token(current.toString(), weight, index));
+                index = i + 1;
+                current.setLength(0);
             } else {
-                cur +=text.charAt(i) ;
+                current.append(text.charAt(i));
             }
         }
 
-        if (cur.length() >  2)
-            tokens.add(new Token(cur , weight , index)) ;
-        return  tokens ;
+        if (current.length() > 2) tokens.add(new Token(current.toString(), weight, index));
+        return tokens;
     }
 }
