@@ -21,7 +21,11 @@ public class SimpleAnalyzer extends Analyzer {
         for (Filter filter : filters) {
             List<Token> current = new ArrayList<>();
             for (Token token : tokens) {
-                filter.filter(token).stream().forEach(filterdToken -> current.add(filterdToken));
+                try {
+                    filter.filter(token).stream().forEach(filterdToken -> current.add(filterdToken));
+                } catch (Exception e) {
+
+                }
             }
             tokens = current;
         }
