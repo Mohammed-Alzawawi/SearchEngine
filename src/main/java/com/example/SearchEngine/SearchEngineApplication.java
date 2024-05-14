@@ -1,5 +1,6 @@
 package com.example.SearchEngine;
 
+import com.example.SearchEngine.starter.JsonReceiver;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
