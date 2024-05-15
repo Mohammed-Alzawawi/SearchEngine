@@ -20,6 +20,7 @@ public class StopWordsFilter implements Filter {
                 Scanner scanner = new Scanner(inputStream);
                 while (scanner.hasNext()) stopwWords.add(scanner.next());
             } catch (IOException e) {
+                throw new IllegalStateException() ;
             }
         }
     }

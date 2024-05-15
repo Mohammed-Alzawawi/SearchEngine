@@ -18,13 +18,17 @@ public class SimpleTokenizer implements Tokenizer {
             if (Character.isDigit(text.charAt(i)) || Character.isLetter(text.charAt(i))) {
                 current.append(text.charAt(i));
             } else {
-                if (current.length() > 2) tokens.add(new Token(current.toString(), weight, index));
+                if (current.length() > 2) {
+                    tokens.add(new Token(current.toString(), weight, index));
+                }
                 index = i + 1;
                 current.setLength(0);
             }
         }
 
-        if (current.length() > 2) tokens.add(new Token(current.toString(), weight, index));
+        if (current.length() > 2) {
+            tokens.add(new Token(current.toString(), weight, index));
+        }
 
         return tokens;
     }

@@ -16,7 +16,9 @@ public class WhiteSpaceTokenizer implements Tokenizer {
 
         for (int i = 0; i < text.length(); i++) {
             if (Character.isWhitespace(text.charAt(i))) {
-                if (current.length() > 2) tokens.add(new Token(current.toString(), weight, index));
+                if (current.length() > 2) {
+                    tokens.add(new Token(current.toString(), weight, index));
+                }
                 index = i + 1;
                 current.setLength(0);
             } else {
@@ -24,7 +26,9 @@ public class WhiteSpaceTokenizer implements Tokenizer {
             }
         }
 
-        if (current.length() > 2) tokens.add(new Token(current.toString(), weight, index));
+        if (current.length() > 2) {
+            tokens.add(new Token(current.toString(), weight, index));
+        }
         return tokens;
     }
 }
