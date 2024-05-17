@@ -1,7 +1,6 @@
-package com.example.SearchEngine.starter;
+package com.example.SearchEngine.jsonHandler;
 
-import com.example.SearchEngine.directoryControl.FolderManipulator;
-import com.example.SearchEngine.jsonHandler.JsonParser;
+import com.example.SearchEngine.directoryControl.FolderController;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.ParseException;
 
@@ -9,12 +8,12 @@ import java.io.IOException;
 import java.util.Objects;
 
 public class JsonReceiver {
-    private final FolderManipulator folderManipulator = new FolderManipulator();
+    private final FolderController folderController = new FolderController();
 
     public void start() throws IOException, ParseException {
         String filePath = "C:\\Search Engine\\Services\\centuryBoys.json";
         JSONObject jsonObject = JsonParser.jsonFileToJsonObject(filePath);
-//        addJson(jsonObject);
+        addJson(jsonObject);
 //        updateJson(jsonObject, "name", "Century Boys");
 //        deleteJson(jsonObject);
     }
@@ -24,9 +23,9 @@ public class JsonReceiver {
         return jsonObject.containsKey("id") && jsonObject.get("id") instanceof Long;
     }
 
-    public void deleteJson(JSONObject jsonObject){
+    public void deleteJson(JSONObject jsonObject) throws IOException {
         if (checkID(jsonObject)) {
-            folderManipulator.deleteFolder(jsonObject.get("id").toString());
+            folderController.deleteFolder(jsonObject);
         }
         else{
             System.out.println("ID not found");
@@ -40,11 +39,11 @@ public class JsonReceiver {
         }
 
         String identifier = jsonObject.get("id").toString();
-        if (folderManipulator.checkExistence(identifier)){
+        if (folderController.checkExistence(identifier)){
             System.out.println("Folder " + identifier + " already exists");
         }
         else {
-            folderManipulator.createFolder(jsonObject);
+            folderController.createFolder(jsonObject);
             System.out.println("=====================================\n");
             System.out.println("- Adding Json to directory is done.");
         }
@@ -56,7 +55,7 @@ public class JsonReceiver {
             return;
         }
 
-        if (!folderManipulator.checkExistence(jsonObject.get("id").toString())){
+        if (!folderController.checkExistence(jsonObject.get("id").toString())){
             System.out.println("This Json file does not exist in the directory");
             return;
         }
@@ -68,7 +67,7 @@ public class JsonReceiver {
             else {
                 jsonObject.put(key, value);
                 deleteJson(jsonObject);
-                folderManipulator.createFolder(jsonObject);
+                folderController.createFolder(jsonObject);
                 System.out.println("=====================================\n");
                 System.out.println("- Updated the " + key + " to " + value);
             }

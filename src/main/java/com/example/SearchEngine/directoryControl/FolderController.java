@@ -1,5 +1,6 @@
 package com.example.SearchEngine.directoryControl;
 
+import com.example.SearchEngine.schamePath.PathController;
 import org.json.simple.JSONObject;
 
 import java.io.File;
@@ -10,9 +11,9 @@ import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 
-
-public class FolderManipulator {
+public class FolderController {
     String path = "C:\\Search Engine\\Directory";
+    PathController pathController = new PathController();
 
     public void createFolder(JSONObject jsonObject) throws IOException {
         String folderPath = path +"\\" + jsonObject.get("id").toString();
@@ -28,6 +29,12 @@ public class FolderManipulator {
                 Files.write(jsonFilePath, jsonObject.toString().getBytes());
                 System.out.println("Done creating the Json File");
 
+                if (pathController.createPath(jsonObject.get("id").toString(), path)){
+                    System.out.println("Done creating the path");
+                }
+                else {
+                    System.out.println("Error while creating the path");
+                }
             } else {
                 System.out.println("Failed to create the folder");
             }
@@ -44,7 +51,8 @@ public class FolderManipulator {
         return null;
     }
 
-    public void deleteFolder(String folderName) {
+    public void deleteFolder(JSONObject jsonObject) throws IOException {
+        String folderName = jsonObject.get("id").toString();
         File folder = getFolder(folderName);
 
         if (folder != null && folder.exists()) {
@@ -53,6 +61,13 @@ public class FolderManipulator {
                 file.delete();
             }
             boolean deleted = folder.delete();
+            if (pathController.deletePath(jsonObject.get("id").toString())){
+                System.out.println("Done deleting the path");
+            }
+            else{
+                System.out.println("Error while deleting the path");
+            }
+
             if (deleted) {
                 System.out.println("Deleted the folder");
             }
