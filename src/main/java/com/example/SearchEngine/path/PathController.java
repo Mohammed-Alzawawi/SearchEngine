@@ -1,4 +1,6 @@
-package com.example.SearchEngine.schamePath;
+package com.example.SearchEngine.path;
+
+import com.example.SearchEngine.directory.FileUtilities;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -10,21 +12,13 @@ public class PathController {
     String pathDirectory = "C:\\Search Engine\\Externals\\Path directory";
 
     public boolean createPath(String schemaID, String path) throws IOException {
-        Path schemaPath = Paths.get(pathDirectory, schemaID);
-        Files.createFile(schemaPath);
-        Files.write(schemaPath, path.getBytes());
-        return Files.exists(schemaPath);
+        String fullPath = pathDirectory + "\\" + schemaID;
+        return FileUtilities.createFile(fullPath, path);
     }
 
     public boolean deletePath(String schemaID) throws IOException {
-        Path schemaPath = Paths.get(pathDirectory, schemaID);
-        if (Files.exists(schemaPath)) {
-            Files.delete(schemaPath);
-            return true;
-        }
-        else{
-            return false;
-        }
+        String fullPath = pathDirectory + "\\" + schemaID;
+        return FileUtilities.deleteFile(fullPath);
     }
 
     public boolean updatePath(Long schemaID, String newPathDirectory) throws IOException {

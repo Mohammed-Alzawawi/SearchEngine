@@ -1,6 +1,7 @@
-package com.example.SearchEngine.jsonHandler;
+package com.example.SearchEngine.json;
 
-import com.example.SearchEngine.directoryControl.FolderController;
+import com.example.SearchEngine.directory.FileUtilities;
+import com.example.SearchEngine.directory.FolderController;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.ParseException;
 
@@ -13,9 +14,9 @@ public class JsonReceiver {
     public void start() throws IOException, ParseException {
         String filePath = "C:\\Search Engine\\Services\\centuryBoys.json";
         JSONObject jsonObject = JsonParser.jsonFileToJsonObject(filePath);
-        addJson(jsonObject);
+//        addJson(jsonObject);
 //        updateJson(jsonObject, "name", "Century Boys");
-//        deleteJson(jsonObject);
+        deleteJson(jsonObject);
     }
 
 
@@ -39,7 +40,7 @@ public class JsonReceiver {
         }
 
         String identifier = jsonObject.get("id").toString();
-        if (folderController.checkExistence(identifier)){
+        if (FileUtilities.checkExistence(FolderController.path + "\\" + identifier)){
             System.out.println("Folder " + identifier + " already exists");
         }
         else {
@@ -54,8 +55,8 @@ public class JsonReceiver {
             System.out.println("ID not found");
             return;
         }
-
-        if (!folderController.checkExistence(jsonObject.get("id").toString())){
+        String identifier = jsonObject.get("id").toString();
+        if (!FileUtilities.checkExistence(FolderController.path + "\\" + identifier)){
             System.out.println("This Json file does not exist in the directory");
             return;
         }

@@ -1,4 +1,4 @@
-package com.example.SearchEngine.jsonHandler;
+package com.example.SearchEngine.json;
 
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
