@@ -15,8 +15,8 @@ public class JsonReceiver {
         String filePath = "C:\\Search Engine\\Services\\centuryBoys.json";
         JSONObject jsonObject = JsonParser.jsonFileToJsonObject(filePath);
 //        addJson(jsonObject);
-//        updateJson(jsonObject, "name", "Century Boys");
-        deleteJson(jsonObject);
+//        updateJson(jsonObject, "name", "Century Boys {Updated}");
+//        deleteJson(jsonObject);
     }
 
 

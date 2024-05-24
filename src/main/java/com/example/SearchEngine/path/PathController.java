@@ -3,9 +3,6 @@ package com.example.SearchEngine.path;
 import com.example.SearchEngine.directory.FileUtilities;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 
 
 public class PathController {
@@ -22,16 +19,9 @@ public class PathController {
     }
 
     public boolean updatePath(Long schemaID, String newPathDirectory) throws IOException {
-        Path schemaPath = Paths.get(pathDirectory, schemaID.toString());
-        if (Files.exists(schemaPath)) {
-            Files.delete(schemaPath);
-            Path newPath = Paths.get(newPathDirectory, schemaID.toString());
-            Files.createFile(newPath);
-            Files.write(newPath, newPathDirectory.getBytes());
-            return true;
-        }
-        else{
-            return false;
-        }
+        String oldFullPath = pathDirectory + "\\" + schemaID.toString();
+        String newFullPath = pathDirectory + "\\" + schemaID.toString();
+        return FileUtilities.deleteFile(oldFullPath)
+                && FileUtilities.createFile(newFullPath, oldFullPath);
     }
 }

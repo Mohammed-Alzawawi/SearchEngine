@@ -9,9 +9,9 @@ import java.io.FileReader;
 import java.io.IOException;
 
 public class JsonParser {
-    private static String jsonFileToString(String fileName) throws IOException {
+    private static String jsonFileToString(String filePath) throws IOException {
         String json = "";
-        BufferedReader bufferedReader = new BufferedReader(new FileReader(fileName));
+        BufferedReader bufferedReader = new BufferedReader(new FileReader(filePath));
         String line = "";
 
         while((line = bufferedReader.readLine()) != null){
