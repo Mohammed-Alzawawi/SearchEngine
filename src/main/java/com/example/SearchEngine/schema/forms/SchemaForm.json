@@ -1,0 +1,7 @@
+{
+    "id": "integer",
+    "name": "string",
+    "properties": {
+        "$attribute": "dataType"
+    }
+}
