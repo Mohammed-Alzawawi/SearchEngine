@@ -1,8 +1,7 @@
 package com.example.SearchEngine.json;
 
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -20,13 +19,9 @@ public class JsonParser {
         return json;
     }
 
-    public static JSONObject jsonFileToJsonObject(String filepath) throws IOException, ParseException {
+    public static JsonNode jsonFileToJsonNode(String filepath) throws IOException {
         String str = jsonFileToString(filepath);
-        JSONObject jsonObject = null;
-        JSONParser parser = new JSONParser();
-        Object obj = parser.parse(str);
-        jsonObject = (JSONObject) obj;
-
-        return jsonObject;
+        ObjectMapper objectMapper = new ObjectMapper();
+        return objectMapper.readTree(str);
     }
 }
