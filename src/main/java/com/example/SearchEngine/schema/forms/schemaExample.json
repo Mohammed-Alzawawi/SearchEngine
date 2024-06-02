@@ -1,0 +1,36 @@
+{
+    "id": 1,
+    "name": "article",
+    "properties": {
+        "title": {
+            "type": "text",
+            "mandatory": true,
+            "wight": 1
+        },
+        "author": {
+            "type": "text",
+            "mandatory": true,
+            "wight": 2
+        },
+        "publication_date": {
+            "type": "date",
+            "mandatory": true
+        },
+        "category": {
+            "type": "text",
+            "mandatory": true
+        },
+        "tags": {
+            "type": "array",
+            "items": {
+                "type": "keyword"
+            },
+            "mandatory": true
+        },
+        "content": {
+            "type": "text",
+            "mandatory": true,
+            "wight": 1
+        }
+    }
+}
