@@ -1,14 +1,17 @@
-package com.example.SearchEngine.schema;
+package com.example.SearchEngine.schema.util;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
 import com.example.SearchEngine.Constants.Constants.*;
+import com.example.SearchEngine.schema.util.SchemaFormatter;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.stereotype.Component;
 
-import static com.example.SearchEngine.schema.InstanceChecker.isInstance;
+import static com.example.SearchEngine.schema.util.InstanceChecker.isInstance;
 
+@Component
 public class SchemaValidator {
     private final List<String> dataTypes;
     private final Map<String, HashMap<String, Object>> typeForms;
@@ -28,9 +31,9 @@ public class SchemaValidator {
                 throw new IllegalStateException("\"type\" field not found");
             }
             this.dataTypes.add((String) type);
-            this.typeForms.put((String) type, readJSON(Paths.SCHEMA_FORMS_PATH+(String)type+"Form.json"));
+            this.typeForms.put((String) type, readJSON(Paths.SCHEMA_FORMS_PATH + (String) type + "Form.json"));
         }
-        this.generalForm = readJSON(Paths.SCHEMA_FORMS_PATH+"generalAttributeForm.json");
+        this.generalForm = readJSON(Paths.SCHEMA_FORMS_PATH + "generalAttributeForm.json");
         HashMap<String, String> typesInJava = (HashMap<String, String>) metadata.get("typesInJava");
         this.typesInJava.putAll(typesInJava);
     }
@@ -43,12 +46,12 @@ public class SchemaValidator {
         }
         if (properties instanceof HashMap) {
             validateProperties((HashMap<String, Object>) properties);
-        }
-        else {
+        } else {
             throw new IllegalStateException(String.format(Messages.SCHEMA_ATTRIBUTE_NOT_FOUND, "properties"));
         }
     }
-    public void validateProperties(HashMap<String, Object> receivedProperties) {
+
+    private void validateProperties(HashMap<String, Object> receivedProperties) {
         Set<String> attributeNames = receivedProperties.keySet();
         Set<String> generalAttributeFields = generalForm.keySet();
         for (String attributeName : attributeNames) {
@@ -64,7 +67,7 @@ public class SchemaValidator {
         }
     }
 
-    public void validateDataType(HashMap<String, Object> receivedForm) {
+    private void validateDataType(HashMap<String, Object> receivedForm) {
         Object type = receivedForm.get("type");
         if (!(type instanceof String) || !dataTypes.contains(type.toString())) {
             throw new IllegalStateException(String.format(Messages.NOT_FOUND_OR_INVALID_FIELD, "type"));
@@ -82,8 +85,7 @@ public class SchemaValidator {
                     throw new IllegalStateException(Messages.INVALID_SCHEMA_REPRESENTATION);
                 }
                 validateDataType((HashMap<String, Object>) formToBeChecked);
-            }
-            else {
+            } else {
                 String fieldType = typeForm.get(field).toString();
                 if (!isInstance(receivedForm.get(field), typesInJava.get(fieldType))) {
                     throw new IllegalStateException(String.format(Messages.NOT_FOUND_OR_INVALID_FIELD, field));
