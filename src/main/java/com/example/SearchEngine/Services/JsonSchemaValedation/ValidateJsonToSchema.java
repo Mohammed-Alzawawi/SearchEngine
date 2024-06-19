@@ -1,8 +1,8 @@
 package com.example.SearchEngine.Services.JsonSchemaValedation;
 
-import com.example.SearchEngine.Services.JsonSchemaValedation.ConstrainsChecks.ConstrainCheck;
-import com.example.SearchEngine.Services.JsonSchemaValedation.ConstrainsChecks.ItemTypeCheck;
-import com.example.SearchEngine.Services.JsonSchemaValedation.ConstrainsChecks.TypeCheck;
+import com.example.SearchEngine.Services.JsonSchemaValedation.ConstrainsChecks.ConstrainChecker;
+import com.example.SearchEngine.Services.JsonSchemaValedation.ConstrainsChecks.ItemTypeChecker;
+import com.example.SearchEngine.Services.JsonSchemaValedation.ConstrainsChecks.TypeChecker;
 import com.example.SearchEngine.Services.JsonSchemaValedation.FieldsValidations.FieldValidation;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,8 +15,8 @@ import java.util.*;
 @Service
 public class ValidateJsonToSchema {
     @Autowired
-    ObjectMapper mapper ;
-    Map<String , List<FieldValidation>> fields ;
+    private ObjectMapper mapper ;
+    private Map<String , List<FieldValidation>> fields ;
 
     public ValidateJsonToSchema() {
         this.fields = new HashMap<>();
@@ -25,28 +25,25 @@ public class ValidateJsonToSchema {
 
     private void fiilFields( Map<String , Object> schema ) {
         schema = (Map<String, Object>) schema.get("properties") ;
-        ConstrainCheck constrainCheck ;
+        ConstrainChecker constrainChecker;
         for (String key : schema.keySet()) {
             fields.put(key , new ArrayList<>()) ;
             Map<String , Object> field = (Map<String, Object>) schema.get(key) ;
-            for (String fieldConstrain : field.keySet()) {
-                if (fieldConstrain.equals("type")) {
-                    constrainCheck = new TypeCheck() ;
-                    fields.get(key).add(constrainCheck.check(field.get(fieldConstrain).toString())) ;
-                } else if (fieldConstrain.equals("items") ) {
-                    Map<String , Object> items = (Map<String, Object>) field.get("items") ;
-                    for (String itemConstrain : items.keySet()) {
-                        if(itemConstrain.equals("type")) {
-                            constrainCheck = new ItemTypeCheck();
-                            fields.get(key).add(constrainCheck.check(items.get(itemConstrain).toString())) ;
-                        }
-                    }
+            if (field.containsKey("type")) {
+                constrainChecker = new TypeChecker() ;
+                fields.get(key).add(constrainChecker.check(field.get("type").toString())) ;
+            }
+            if (field.containsKey("items")) {
+                Map<String , Object> items = (Map<String, Object>) field.get("items") ;
+                if(items.containsKey("type") ) {
+                    constrainChecker = new ItemTypeChecker();
+                    fields.get(key).add(constrainChecker.check(items.get("type").toString())) ;
                 }
             }
         }
     }
 
-    public  boolean mandatoryCheck(Map<String , Object> schema , Map<String , Object> json) {
+    private  boolean mandatoryCheck(Map<String , Object> schema , Map<String , Object> json) {
         schema = (Map<String, Object>) schema.get("properties") ;
         for (String key : schema.keySet()) {
             Map<String , Object> field = (Map<String, Object>) schema.get(key) ;
@@ -58,7 +55,7 @@ public class ValidateJsonToSchema {
         return  true ;
     }
 
-    public boolean fieldCheck(Map<String , Object> schema , Map<String , Object> json) {
+    private boolean fieldCheck(Map<String , Object> schema , Map<String , Object> json) {
         schema = (Map<String, Object>) schema.get("properties") ;
         for (String key  : json.keySet()) {
             if (!schema.containsKey(key)) {

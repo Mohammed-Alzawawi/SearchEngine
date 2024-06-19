@@ -2,9 +2,9 @@ package com.example.SearchEngine.Services.JsonSchemaValedation.ConstrainsChecks;
 
 import com.example.SearchEngine.Services.JsonSchemaValedation.FieldsValidations.*;
 
-public class TypeCheck implements ConstrainCheck {
+public class TypeChecker implements ConstrainChecker {
 
-    public  TypeCheck () {}
+    public TypeChecker() {}
 
     @Override
     public FieldValidation check(String value) {

@@ -2,7 +2,7 @@ package com.example.SearchEngine.Services.JsonSchemaValedation.ConstrainsChecks;
 
 import com.example.SearchEngine.Services.JsonSchemaValedation.FieldsValidations.*;
 
-public class ItemTypeCheck implements  ConstrainCheck{
+public class ItemTypeChecker implements ConstrainChecker {
     @Override
     public FieldValidation check(String value) {
         switch (value) {

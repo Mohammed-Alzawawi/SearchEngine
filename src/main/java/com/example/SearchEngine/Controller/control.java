@@ -3,33 +3,27 @@ package com.example.SearchEngine.Controller;
 import com.example.SearchEngine.Services.JsonSchemaValedation.ValidateJsonToSchema;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import java.io.File;
+
 import java.io.IOException;
 import java.util.Map;
 
 @RestController
-@RequestMapping("user")
+@RequestMapping("schema")
 public class control {
     @Autowired
-    ValidateJsonToSchema validateJsonToSchema ;
+    private ValidateJsonToSchema validateJsonToSchema ;
     @Autowired
-    ObjectMapper objectMapper;
+    private ObjectMapper objectMapper;
 
 
-    @PostMapping("/article")
-    void addArticle(@RequestBody String JsonArticle) throws IOException {
-        String schemaName = "articel" ;
+    @PostMapping("/{schemaName}")
+    String addSchema(@PathVariable String schemaName , @RequestBody String JsonArticle ) throws IOException {
         Map<String , Object> json = objectMapper.readValue(JsonArticle , Map.class) ;
-
         if(validateJsonToSchema.validate(schemaName , json)) {
-            System.out.println("yes");
-        } else {
-            System.out.println("no");
+            return  "Done" ;
         }
+        return  "not Done";
    }
 }
