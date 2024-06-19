@@ -1,0 +1,16 @@
+{
+    "id": 1,
+    "name": "array of array",
+    "properties": {
+        "data": {
+            "type": "array",
+            "items": {
+                "type": "array",
+                "items": {
+                    "type": "integer"
+                }
+            },
+            "mandatory": false
+        }
+    }
+}
