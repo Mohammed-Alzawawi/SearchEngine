@@ -1,4 +1,4 @@
-package com.example.SearchEngine.schema;
+package com.example.SearchEngine.schema.util;
 
 import java.util.HashMap;
 import java.util.Map;

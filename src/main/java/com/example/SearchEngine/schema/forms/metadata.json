@@ -1,12 +1,19 @@
 {
-    "dataTypes": ["array", "date", "double", "int", "keyword", "text"],
+    "dataTypes": [
+        "array",
+        "date",
+        "double",
+        "int",
+        "keyword",
+        "text"
+    ],
     "typesInJava": {
         "array": "Array",
         "boolean": "Boolean",
         "date": "String",
         "double": "Double",
         "int": "Integer",
-        "integer" : "Integer",
+        "integer": "Integer",
         "keyword": "String",
         "text": "String",
         "string": "String"

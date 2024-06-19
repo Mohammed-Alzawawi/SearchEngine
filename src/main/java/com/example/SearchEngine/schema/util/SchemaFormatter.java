@@ -1,4 +1,4 @@
-package com.example.SearchEngine.schema;
+package com.example.SearchEngine.schema.util;
 
 import com.example.SearchEngine.Constants.Constants;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -23,17 +23,18 @@ public class SchemaFormatter {
     public void setGeneralDefaults(HashMap<String, Object> attribute) {
         Object typeDefaults = defaultValues.get("generalAttributeForm");
         if (typeDefaults instanceof HashMap) {
-            for (String key : ((HashMap<String, Object>)typeDefaults).keySet()) {
-                attribute.putIfAbsent(key, ((HashMap<String, Object>)typeDefaults).get(key));
+            for (String key : ((HashMap<String, Object>) typeDefaults).keySet()) {
+                attribute.putIfAbsent(key, ((HashMap<String, Object>) typeDefaults).get(key));
             }
         }
     }
+
     public void setTypeDefaults(HashMap<String, Object> attribute) {
         String attributeType = (String) attribute.get("type");
         Object typeDefaults = defaultValues.get(attributeType);
         if (typeDefaults instanceof HashMap) {
-            for (String key : ((HashMap<String, Object>)typeDefaults).keySet()) {
-                attribute.putIfAbsent(key, ((HashMap<String, Object>)typeDefaults).get(key));
+            for (String key : ((HashMap<String, Object>) typeDefaults).keySet()) {
+                attribute.putIfAbsent(key, ((HashMap<String, Object>) typeDefaults).get(key));
             }
         }
     }

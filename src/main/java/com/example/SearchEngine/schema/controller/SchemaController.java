@@ -1,5 +1,7 @@
-package com.example.SearchEngine.schema;
+package com.example.SearchEngine.schema.controller;
 
+import com.example.SearchEngine.schema.service.DefaultService;
+import com.example.SearchEngine.schema.service.SchemaServiceInterface;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,10 +15,9 @@ import java.util.HashMap;
 @RestController
 @RequestMapping(path = "api/schema")
 public class SchemaController {
-    private final SchemaService schemaService;
+    private SchemaServiceInterface schemaService = new DefaultService();
 
-    @Autowired
-    public SchemaController(SchemaService schemaService) {
+    public SchemaController(SchemaServiceInterface schemaService) {
         this.schemaService = schemaService;
     }
 
