@@ -1,21 +1,25 @@
-package com.example.SearchEngine.json;
+package com.example.SearchEngine.schema.service;
 
-import com.example.SearchEngine.directory.FileUtilities;
-import com.example.SearchEngine.directory.FolderController;
+import com.example.SearchEngine.utils.FileUtil;
+import com.example.SearchEngine.utils.JsonParserUtil;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
-import java.io.IOException;
 import java.util.Objects;
 
-public class JsonReceiver {
-    private final FolderController folderController = new FolderController();
-    ObjectMapper mapper = new ObjectMapper();
+@Component
+public class SchemaStorageService {
+    @Autowired
+    private SchemaFolderService folderController;
+    @Autowired
+    private ObjectMapper mapper;
 
-    public void start() throws IOException {
+    public void start() throws Exception {
         String filePath = "C:\\Search Engine\\Services\\centuryBoys.json";
-        JsonNode jsonNode = JsonParser.jsonFileToJsonNode(filePath);
+        JsonNode jsonNode = JsonParserUtil.jsonFileToJsonNode(filePath);
         System.out.println(jsonNode);
 //        addJson(jsonNode);
 //        updateJson(jsonNode, "name", "Century Boys {Updated}");
@@ -27,7 +31,7 @@ public class JsonReceiver {
         return jsonNode.has("id") && (jsonNode.get("id").isInt() || jsonNode.get("id").isLong());
     }
 
-    public void deleteJson(JsonNode jsonNode) throws IOException {
+    public void deleteJson(JsonNode jsonNode) throws Exception {
         if (checkID(jsonNode)) {
             // check folderController
             folderController.deleteFolder(jsonNode);
@@ -37,14 +41,14 @@ public class JsonReceiver {
         }
     }
 
-    public void addJson(JsonNode jsonNode) throws IOException {
+    public void addJson(JsonNode jsonNode) throws Exception {
         if (!checkID(jsonNode)) {
             System.out.println("ID not found");
             return;
         }
 
         String identifier = jsonNode.get("id").toString();
-        if (FileUtilities.checkExistence(FolderController.path + "\\" + identifier)){
+        if (FileUtil.checkExistence(SchemaFolderService.path + "\\" + identifier)){
             System.out.println("Folder " + identifier + " already exists");
         }
         else {
@@ -54,13 +58,13 @@ public class JsonReceiver {
         }
     }
 
-    public void updateJson(JsonNode jsonNode, String key, Object value) throws IOException {
+    public void updateJson(JsonNode jsonNode, String key, Object value) throws Exception {
         if (!checkID(jsonNode)){
             System.out.println("ID not found");
             return;
         }
         String identifier = jsonNode.get("id").toString();
-        if (!FileUtilities.checkExistence(FolderController.path + "\\" + identifier)){
+        if (!FileUtil.checkExistence(SchemaFolderService.path + "\\" + identifier)){
             System.out.println("This Json file does not exist in the directory");
             return;
         }

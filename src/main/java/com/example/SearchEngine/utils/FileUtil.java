@@ -1,4 +1,4 @@
-package com.example.SearchEngine.directory;
+package com.example.SearchEngine.utils;
 
 import java.io.File;
 import java.io.IOException;
@@ -6,7 +6,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-public class FileUtilities {
+public class FileUtil {
     public static boolean createFolder(String folderFullPath){
         File folder = new File(folderFullPath);
         if (!folder.exists()) {
@@ -15,10 +15,20 @@ public class FileUtilities {
         return false;
     }
 
-    public static boolean createFile(String fileFullPath, String content) throws IOException {
+    public static boolean createFile(String fileFullPath, String content) throws Exception {
         Path jsonFilePath = Paths.get(fileFullPath);
-        Files.createFile(jsonFilePath);
-        Files.write(jsonFilePath, content.getBytes());
+        try {
+            Files.createFile(jsonFilePath);
+        } catch (IOException e) {
+            throw new IllegalArgumentException("Could not create the file " + fileFullPath);
+        }
+
+        try {
+            Files.write(jsonFilePath, content.getBytes());
+        } catch (IOException e) {
+            throw new IllegalArgumentException("Could not write on the file " + fileFullPath);
+        }
+
         return Files.exists(jsonFilePath);
     }
 
@@ -39,10 +49,14 @@ public class FileUtilities {
         return false;
     }
 
-    public static boolean deleteFile(String fileFullPath) throws IOException {
+    public static boolean deleteFile(String fileFullPath) throws Exception {
         Path file = Paths.get(fileFullPath);
         if (Files.exists(file)) {
-            Files.delete(file);
+            try {
+                Files.delete(file);
+            } catch (IOException e) {
+                throw new IllegalArgumentException("Could not delete the file " + fileFullPath);
+            }
             return true;
         }
         else{
