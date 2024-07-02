@@ -15,21 +15,19 @@ import java.util.HashMap;
 @RestController
 @RequestMapping(path = "api/schema")
 public class SchemaController {
-    private SchemaServiceInterface schemaService = new DefaultService();
-
-    public SchemaController(SchemaServiceInterface schemaService) {
-        this.schemaService = schemaService;
-    }
+    @Autowired
+    private SchemaServiceInterface schemaService;
+    @Autowired
+    ObjectMapper mapper;
 
     @PostMapping("createSchema")
-    public void createSchema(@RequestBody String jsonString) throws JsonProcessingException {
+    public void createSchema(@RequestBody String jsonString) throws Exception {
         HashMap<String, Object> schema = jsonStringToJsonObject(jsonString);
         schemaService.addNewSchema(schema);
     }
 
     private HashMap<String, Object> jsonStringToJsonObject(String jsonString) throws JsonProcessingException {
-        ObjectMapper objectMapper = new ObjectMapper();
-        HashMap<String, Object> result = objectMapper.readValue(jsonString.toString(), HashMap.class);
+        HashMap<String, Object> result = mapper.readValue(jsonString.toString(), HashMap.class);
         return result;
     }
 }
