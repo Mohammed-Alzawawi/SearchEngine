@@ -1,11 +1,14 @@
-package com.example.SearchEngine.Services.JsonSchemaValedation;
+package com.example.SearchEngine.document.service.docSchemaValidation;
 
-import com.example.SearchEngine.Services.JsonSchemaValedation.ConstrainsChecks.ConstrainChecker;
-import com.example.SearchEngine.Services.JsonSchemaValedation.ConstrainsChecks.ItemTypeChecker;
-import com.example.SearchEngine.Services.JsonSchemaValedation.ConstrainsChecks.TypeChecker;
-import com.example.SearchEngine.Services.JsonSchemaValedation.FieldsValidations.FieldValidation;
+import com.example.SearchEngine.document.service.docSchemaValidation.ConstrainsChecks.ConstrainChecker;
+import com.example.SearchEngine.document.service.docSchemaValidation.ConstrainsChecks.ItemTypeChecker;
+import com.example.SearchEngine.document.service.docSchemaValidation.ConstrainsChecks.TypeChecker;
+import com.example.SearchEngine.document.service.docSchemaValidation.FieldsValidations.FieldValidation;
+import com.example.SearchEngine.schema.service.SchemaDefaultService;
+import com.example.SearchEngine.utils.storage.service.SchemaPathService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -13,14 +16,16 @@ import java.io.IOException;
 import java.util.*;
 
 @Service
-public class ValidateJsonToSchema {
+@Component
+public class ValidateDocToSchema {
     @Autowired
     private ObjectMapper mapper ;
+    @Autowired
+    private SchemaDefaultService schemaDefaultService;
     private Map<String , List<FieldValidation>> fields ;
 
-    public ValidateJsonToSchema() {
+    public ValidateDocToSchema() {
         this.fields = new HashMap<>();
-
     }
 
     private void fiilFields( Map<String , Object> schema ) {
@@ -58,6 +63,9 @@ public class ValidateJsonToSchema {
     private boolean fieldCheck(Map<String , Object> schema , Map<String , Object> json) {
         schema = (Map<String, Object>) schema.get("properties") ;
         for (String key  : json.keySet()) {
+            if (key == "id") {
+                continue;
+            }
             if (!schema.containsKey(key)) {
                 return  false ;
             }
@@ -67,14 +75,22 @@ public class ValidateJsonToSchema {
 
 
 
-    public boolean validate(String  schemaName , Map<String , Object> json ) throws IOException {
-        Map<String , Object> schema = mapper.readValue(new File("D:\\Apps\\work space python\\js.json") , Map.class) ;
+    public boolean validate(String  schemaName , Map<String , Object> json ) throws Exception {
+        Map<String , Object> schema ;
 
+        try {
+            schema = schemaDefaultService.getSchema(schemaName) ;
+        } catch (Exception e) {
+            throw new IllegalStateException("Error getting schema from SchemaDefaultService");
+        }
         if (!fieldCheck(schema , json) || !mandatoryCheck(schema , json) ) {
             return  false ;
         }
         fiilFields(schema);
         for (String key : json.keySet()) {
+            if (key == "id") {
+                continue;
+            }
             for (FieldValidation validation : fields.get(key)) {
                 if (!validation.validate(json.get(key))) {
                     return  false ;

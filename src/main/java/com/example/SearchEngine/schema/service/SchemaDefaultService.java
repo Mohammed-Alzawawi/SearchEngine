@@ -1,20 +1,24 @@
 package com.example.SearchEngine.schema.service;
 
 import com.example.SearchEngine.schema.util.SchemaValidator;
+import com.example.SearchEngine.utils.storage.service.SchemaPathService;
 import com.example.SearchEngine.utils.storage.service.SchemaStorageService;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
 import java.util.*;
 
 @Service
-public class DefaultService implements SchemaServiceInterface {
+public class SchemaDefaultService implements SchemaServiceInterface {
     @Autowired
     private SchemaValidator schemaValidator;
     @Autowired
     private SchemaStorageService schemaStorageService;
+    @Autowired
+    private SchemaPathService schemaPathService ;
     @Autowired
     private ObjectMapper mapper;
 
@@ -22,5 +26,16 @@ public class DefaultService implements SchemaServiceInterface {
         schemaValidator.validateSchema(jsonObject);
         JsonNode jsonNode = mapper.convertValue(jsonObject, JsonNode.class);
         schemaStorageService.saveSchemaFile(jsonNode);
+    }
+
+    public  Map<String , Object> getSchema(String schemaName) throws Exception {
+        String schemaPath  ;
+        try {
+            schemaPath = schemaPathService.getSchemaPath(schemaName) + schemaName + "_Schema.json"  ;
+        } catch (Exception e) {
+            throw new IllegalStateException("Schema Not Found");
+        }
+        Map<String , Object> schema = mapper.readValue(new File(schemaPath) , Map.class) ;
+        return schema ;
     }
 }

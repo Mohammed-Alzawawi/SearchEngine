@@ -28,6 +28,7 @@ public class SchemaStorageService {
         String folderPath = Constants.Paths.SCHEMA_STORAGE_PATH + jsonNode.get("id").toString();
         try {
             FileUtil.createFolder(folderPath);
+            FileUtil.createFolder(folderPath  + "/documents");
             System.out.println("Done creating the folder");
         }
         catch (Exception e) {
@@ -55,7 +56,7 @@ public class SchemaStorageService {
 
     private void addPathFile(JsonNode jsonNode) throws Exception {
         try {
-            schemaPathService.createPath(jsonNode.get("id").toString(), Constants.Paths.SCHEMA_STORAGE_PATH);
+            schemaPathService.createPath(jsonNode.get("id").toString(), Constants.Paths.SCHEMA_STORAGE_PATH + jsonNode.get("id").toString() + '/' );
             System.out.println("Done creating the path file");
         }
         catch (Exception e) {
