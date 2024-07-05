@@ -1,6 +1,6 @@
-package com.example.SearchEngine.Services.JsonSchemaValedation.ConstrainsChecks;
+package com.example.SearchEngine.document.service.docSchemaValidation.ConstrainsChecks;
 
-import com.example.SearchEngine.Services.JsonSchemaValedation.FieldsValidations.*;
+import com.example.SearchEngine.document.service.docSchemaValidation.FieldsValidations.*;
 
 public class TypeChecker implements ConstrainChecker {
 

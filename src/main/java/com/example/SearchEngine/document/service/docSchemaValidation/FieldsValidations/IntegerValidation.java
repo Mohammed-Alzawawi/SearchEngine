@@ -1,4 +1,4 @@
-package com.example.SearchEngine.Services.JsonSchemaValedation.FieldsValidations;
+package com.example.SearchEngine.document.service.docSchemaValidation.FieldsValidations;
 
 public class IntegerValidation implements FieldValidation {
 
