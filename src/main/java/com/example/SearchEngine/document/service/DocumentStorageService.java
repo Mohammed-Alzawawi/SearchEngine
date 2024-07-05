@@ -1,6 +1,6 @@
-package com.example.SearchEngine.document.service.docMmanipulate;
+package com.example.SearchEngine.document.service;
 
-import com.example.SearchEngine.document.service.docSchemaValidation.ValidateDocToSchema;
+import com.example.SearchEngine.document.service.Validation.DocumentValidator;
 import com.example.SearchEngine.utils.storage.FileUtil;
 import com.example.SearchEngine.utils.storage.service.SchemaPathService;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -12,31 +12,31 @@ import org.springframework.stereotype.Service;
 import java.util.Map;
 
 @Service
-public class DocStorageService {
+public class DocumentStorageService {
 
     @Autowired
-    private ValidateDocToSchema validateDocToSchema ;
+    SchemaPathService schemaPathService;
     @Autowired
-    SchemaPathService schemaPathService ;
+    private DocumentValidator documentValidator;
     @Autowired
-    private ObjectMapper mapper ;
+    private ObjectMapper mapper;
 
 
-    private void checkID(JsonNode jsonNode){
+    private void checkID(JsonNode jsonNode) {
         if (!jsonNode.has("id") || (!jsonNode.get("id").isInt() && !jsonNode.get("id").isLong())) {
             throw new IllegalStateException("ID not found");
         }
     }
 
 
-    public  void  addDoc (String schemaName , Map<String,Object> doc ) throws Exception {
-        if (validateDocToSchema.validate(schemaName , doc)  ) {
-            String path = schemaPathService.getSchemaPath(schemaName) ;
+    public void addDocument(String schemaName, Map<String, Object> doc) throws Exception {
+        if (documentValidator.validate(schemaName, doc)) {
+            String path = schemaPathService.getSchemaPath(schemaName);
 
-            JsonNode jsonNode = mapper.convertValue(doc , JsonNode.class) ;
+            JsonNode jsonNode = mapper.convertValue(doc, JsonNode.class);
             checkID(jsonNode);
-            path+="documents/" + jsonNode.get("id").toString()  ;
-            String content  ;
+            path += "documents/" + jsonNode.get("id").toString();
+            String content;
             try {
                 content = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(jsonNode);
             } catch (JsonProcessingException e) {
@@ -45,18 +45,17 @@ public class DocStorageService {
             try {
                 FileUtil.createFile(path, content);
                 System.out.println("Done creating the Json File");
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 throw new IllegalStateException("Problem with creating the Json File!");
             }
         }
     }
 
-    public  void deleteDoc ( String schemaName, Map<String,Object> doc ) throws Exception {
-        JsonNode jsonNode = mapper.convertValue(doc , JsonNode.class) ;
+    public void deleteDocument(String schemaName, Map<String, Object> doc) throws Exception {
+        JsonNode jsonNode = mapper.convertValue(doc, JsonNode.class);
         checkID(jsonNode);
-        String path = schemaPathService.getSchemaPath(schemaName) ;
-        path+="documents/" + jsonNode.get("id").toString()  ;
+        String path = schemaPathService.getSchemaPath(schemaName);
+        path += "documents/" + jsonNode.get("id").toString();
         FileUtil.deleteFile(path);
     }
 }
