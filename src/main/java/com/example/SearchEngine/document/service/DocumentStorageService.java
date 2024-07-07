@@ -42,12 +42,7 @@ public class DocumentStorageService {
             } catch (JsonProcessingException e) {
                 throw new IllegalArgumentException("Error writing json file");
             }
-            try {
-                FileUtil.createFile(path, content);
-                System.out.println("Done creating the Json File");
-            } catch (Exception e) {
-                throw new IllegalStateException("Problem with creating the Json File!");
-            }
+            FileUtil.createFile(path, content);
         }
     }
 

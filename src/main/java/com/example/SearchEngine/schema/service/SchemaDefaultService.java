@@ -9,7 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 
 @Service
 public class SchemaDefaultService implements SchemaServiceInterface {
@@ -18,7 +19,7 @@ public class SchemaDefaultService implements SchemaServiceInterface {
     @Autowired
     private SchemaStorageService schemaStorageService;
     @Autowired
-    private SchemaPathService schemaPathService ;
+    private SchemaPathService schemaPathService;
     @Autowired
     private ObjectMapper mapper;
 
@@ -28,14 +29,10 @@ public class SchemaDefaultService implements SchemaServiceInterface {
         schemaStorageService.saveSchemaFile(jsonNode);
     }
 
-    public  Map<String , Object> getSchema(String schemaName) throws Exception {
-        String schemaPath  ;
-        try {
-            schemaPath = schemaPathService.getSchemaPath(schemaName) + schemaName + "_Schema.json"  ;
-        } catch (Exception e) {
-            throw new IllegalStateException("Schema Not Found");
-        }
-        Map<String , Object> schema = mapper.readValue(new File(schemaPath) , Map.class) ;
-        return schema ;
+    public Map<String, Object> getSchema(String schemaName) throws Exception {
+        String schemaPath;
+        schemaPath = schemaPathService.getSchemaPath(schemaName) + schemaName + "_Schema.json";
+        Map<String, Object> schema = mapper.readValue(new File(schemaPath), Map.class);
+        return schema;
     }
 }

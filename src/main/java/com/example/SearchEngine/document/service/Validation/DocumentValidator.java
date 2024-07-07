@@ -76,12 +76,7 @@ public class DocumentValidator {
 
     public boolean validate(String schemaName, Map<String, Object> json) throws Exception {
         Map<String, Object> schema;
-
-        try {
-            schema = schemaDefaultService.getSchema(schemaName);
-        } catch (Exception e) {
-            throw new IllegalStateException("Error getting schema from SchemaDefaultService");
-        }
+        schema = schemaDefaultService.getSchema(schemaName);
         if (!fieldCheck(schema, json) || !mandatoryCheck(schema, json)) {
             return false;
         }

@@ -25,4 +25,5 @@ public class DocumentController {
         documentStorageService.addDocument(schemaName, json);
         return json;
     }
+
 }
