@@ -24,15 +24,15 @@ public class TrieInvertedIndex implements InvertedIndex {
         return AnalyzerEnum.EnglishAnalyzer.getAnalyzer();
     }
 
-    private void indexer(Node root, Integer documentId, String fieldName, List<Token> tokens) {
+    private void indexer(TrieNode root, Integer documentId, String fieldName, List<Token> tokens) {
         for (Token token : tokens) {
-            Node currentNode = root;
+            TrieNode currentTrieNode = root;
             for (int i = 0; i < token.getWord().length(); i++) {
                 Character c = token.getWord().charAt(i);
-                currentNode = currentNode.getNextNode(c);
+                currentTrieNode = currentTrieNode.getNextNode(c);
             }
-            currentNode.setEndOfTerm();
-            currentNode.updateFieldWeight(fieldName, token.getWeight(), documentId);
+            currentTrieNode.setEndOfTerm();
+            currentTrieNode.updateFieldWeight(fieldName, token.getWeight(), documentId);
         }
     }
 
@@ -40,7 +40,7 @@ public class TrieInvertedIndex implements InvertedIndex {
     public void addDocument(String schemaName, Map<String, Object> document) throws Exception {
         Analyzer analyzer;
         List<Token> tokens;
-        Node root = schemaRoot.getSchemaRoot(schemaName);
+        TrieNode root = schemaRoot.getSchemaRoot(schemaName);
         Map<String, Object> schema = (Map<String, Object>) schemaDefaultService.getSchema(schemaName).get("properties");
 
         for (String fieldName : document.keySet()) {
@@ -62,18 +62,18 @@ public class TrieInvertedIndex implements InvertedIndex {
 
     @Override
     public void deleteDocument(String schemaName, Integer documentId) throws Exception {
-        Node root = schemaRoot.getSchemaRoot(schemaName);
-        Stack<Node> stack = new Stack<>();
+        TrieNode root = schemaRoot.getSchemaRoot(schemaName);
+        Stack<TrieNode> stack = new Stack<>();
         stack.push(root);
         while (!stack.isEmpty()) {
-            Node currnetNode = stack.pop();
-            if (currnetNode.isEndOfTerm()) {
-                currnetNode.deleteDocument(documentId);
-                if (currnetNode.empty()) {
-                    currnetNode.removeEndOfTerm();
+            TrieNode currnetTrieNode = stack.pop();
+            if (currnetTrieNode.isEndOfTerm()) {
+                currnetTrieNode.deleteDocument(documentId);
+                if (currnetTrieNode.empty()) {
+                    currnetTrieNode.removeEndOfTerm();
                 }
             }
-            Map<Character, Node> nextNodes = currnetNode.getNextNodes();
+            Map<Character, TrieNode> nextNodes = currnetTrieNode.getNextNodes();
             for (Character character : nextNodes.keySet()) {
                 stack.push(nextNodes.get(character));
             }

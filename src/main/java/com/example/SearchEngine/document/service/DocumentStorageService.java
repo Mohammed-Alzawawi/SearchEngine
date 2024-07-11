@@ -1,7 +1,7 @@
 package com.example.SearchEngine.document.service;
 
 import com.example.SearchEngine.document.service.Validation.DocumentValidator;
-import com.example.SearchEngine.invertedIndex.TrieInvertedIndex;
+import com.example.SearchEngine.invertedIndex.InvertedIndex;
 import com.example.SearchEngine.utils.storage.FileUtil;
 import com.example.SearchEngine.utils.storage.service.SchemaPathService;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -18,7 +18,7 @@ public class DocumentStorageService {
     @Autowired
     SchemaPathService schemaPathService;
     @Autowired
-    TrieInvertedIndex trieInvertedIndex;
+    InvertedIndex trieInvertedIndex;
     @Autowired
     private DocumentValidator documentValidator;
     @Autowired

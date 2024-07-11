@@ -2,24 +2,24 @@ package com.example.SearchEngine.invertedIndex;
 
 import java.util.HashMap;
 
-public class Node {
+public class TrieNode {
 
-    private HashMap<Character, Node> nextNodes = new HashMap<>();
+    private HashMap<Character, TrieNode> nextNodes = new HashMap<>();
     private boolean endOfTerm = false;
     private HashMap<Integer, HashMap<String, Double>> documents = new HashMap<>();
 
-    public Node() {
+    public TrieNode() {
     }
 
-    public HashMap<Character, Node> getNextNodes() {
+    public HashMap<Character, TrieNode> getNextNodes() {
         return nextNodes;
     }
 
-    public Node getNextNode(Character c) {
+    public TrieNode getNextNode(Character c) {
         if (nextNodes.containsKey(c)) {
             return nextNodes.get(c);
         }
-        nextNodes.put(c, new Node());
+        nextNodes.put(c, new TrieNode());
         return nextNodes.get(c);
     }
 
