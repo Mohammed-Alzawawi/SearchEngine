@@ -26,4 +26,9 @@ public class DocumentController {
         return json;
     }
 
+    @PostMapping("/{schemaName}/{documentId}")
+    void deleteDocument(@PathVariable String schemaName, @PathVariable Integer documentId) throws Exception {
+        documentStorageService.deleteDocument(schemaName, documentId);
+    }
+
 }
