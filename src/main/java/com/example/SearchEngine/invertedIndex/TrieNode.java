@@ -1,9 +1,10 @@
 package com.example.SearchEngine.invertedIndex;
 
+import java.io.Serializable;
 import java.util.HashMap;
 
-public class TrieNode {
-
+public class TrieNode implements Serializable {
+    private static final long serialVersionUID = 5424601767160570951L;
     private HashMap<Character, TrieNode> nextNodes = new HashMap<>();
     private boolean endOfTerm = false;
     private HashMap<Integer, HashMap<String, Double>> documents = new HashMap<>();
@@ -61,6 +62,11 @@ public class TrieNode {
 
     public HashMap<Integer, HashMap<String, Double>> getDocuments() {
         return documents;
+    }
+
+    @Override
+    public String toString() {
+        return "nextNodes=" + nextNodes + "\n, documents=" + documents+'\n' ;
     }
 }
 
