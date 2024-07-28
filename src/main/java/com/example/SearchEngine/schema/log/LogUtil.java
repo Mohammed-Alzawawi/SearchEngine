@@ -1,29 +1,37 @@
 package com.example.SearchEngine.schema.log;
 
 import com.example.SearchEngine.Constants.Constants;
+import com.example.SearchEngine.document.service.DocumentStorageService;
 import com.example.SearchEngine.utils.storage.FileUtil;
 import lombok.Synchronized;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.io.*;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
+@Service
 public class LogUtil {
-    private static final Object lock = new Object();
+    @Autowired
+    private static DocumentStorageService documentStorageService;
 
+    private static final Object lock = new Object();
     public static void write(Command command, String documentId, String schemaName){
         if (command == null){
             throw new NullPointerException("command is null");
         }
         String folderPath = Constants.Paths.SCHEMA_STORAGE_PATH + schemaName;
-        String logFilePath = folderPath + "/" + "currentLog.txt";
+        String logFilePath = folderPath + "/currentLog.txt";
         updateLog(command, documentId, logFilePath);
     }
 
     @Synchronized("lock")
     public static void refresh(String schemaName) throws Exception {
         String folderPath = Constants.Paths.SCHEMA_STORAGE_PATH + schemaName;
-        String currentLogPath = folderPath + "/" + "currentLog.txt";
-        String logPath = folderPath + "/" + "log.txt";
+        String currentLogPath = folderPath + "/currentLog.txt";
+        String logPath = folderPath + "/log.txt";
         try{
             BufferedReader reader = new BufferedReader(new FileReader(currentLogPath));
             FileWriter fileWriter = new FileWriter(logPath, true);
@@ -39,12 +47,32 @@ public class LogUtil {
         }
         FileUtil.deleteFile(currentLogPath);
         FileUtil.createFile(currentLogPath, "");
-        cleanUp(logPath);
+    }
+
+    public static void commitLog(String schemaName) throws Exception {
+        String currentLogPath = Constants.Paths.SCHEMA_STORAGE_PATH + schemaName + "/currentLog.txt";
+        BufferedReader reader = new BufferedReader(new FileReader(currentLogPath));
+        String line;
+        while((line = reader.readLine()) != null) {
+            String[] words = line.split(" ");
+            if (Command.valueOf(words[1]) == Command.INSERT){
+                Map<String, Object> document = documentStorageService.getDocument(schemaName, Integer.parseInt(words[2]));
+                documentStorageService.addDocument(schemaName, document);
+            } else if (Command.valueOf(words[1]) == Command.DELETE){
+                documentStorageService.deleteDocument(schemaName, Integer.parseInt(words[2]));
+            } else if (Command.valueOf(words[1]) == Command.UPDATE){
+                // Update method from DocumentStorageService
+            }
+        }
+        reader.close();
     }
 
     @Synchronized("lock")
     private static void updateLog(Command command, String documentId, String logPath){
-        String line = command.toString() + " " + documentId;
+        LocalDateTime now = LocalDateTime.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss_MM/dd/yyyy");
+        String date = now.format(formatter);
+        String line = date + " " + command.toString() + " " + documentId;
         try {
             FileWriter fileWriter = new FileWriter(logPath, true);
             PrintWriter printWriter = new PrintWriter(fileWriter);
@@ -54,7 +82,7 @@ public class LogUtil {
         }
     }
 
-    private static void cleanUp(String logPath) throws Exception {
+    public static void cleanUp(String logPath) throws Exception {
         Map<String, List<Pair>> actions = new HashMap<>();
         BufferedReader reader = new BufferedReader(new FileReader(logPath));
         String line;
@@ -63,12 +91,12 @@ public class LogUtil {
         while ((line = reader.readLine()) != null) {
             String[] words = line.split(" ");
             try{
-                command = Command.valueOf(words[0]);
+                command = Command.valueOf(words[1]);
             }
             catch (Exception e){
                 throw new IllegalArgumentException(e);
             }
-            String documentId = words[1];
+            String documentId = words[2];
             if (!actions.containsKey(documentId)){
                 actions.put(documentId, new ArrayList<>());
             }
