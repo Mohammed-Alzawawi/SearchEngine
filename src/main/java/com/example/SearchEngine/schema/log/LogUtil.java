@@ -2,6 +2,7 @@ package com.example.SearchEngine.schema.log;
 
 import com.example.SearchEngine.Constants.Constants;
 import com.example.SearchEngine.document.service.DocumentStorageService;
+import com.example.SearchEngine.invertedIndex.InvertedIndex;
 import com.example.SearchEngine.utils.storage.FileUtil;
 import lombok.Synchronized;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,9 @@ import java.util.*;
 
 @Service
 public class LogUtil {
+    @Autowired
+    private static InvertedIndex trieInvertedIndex;
+
     @Autowired
     private static DocumentStorageService documentStorageService;
 
@@ -57,9 +61,9 @@ public class LogUtil {
             String[] words = line.split(" ");
             if (Command.valueOf(words[1]) == Command.INSERT){
                 Map<String, Object> document = documentStorageService.getDocument(schemaName, Integer.parseInt(words[2]));
-                documentStorageService.addDocument(schemaName, document);
+                trieInvertedIndex.addDocument(schemaName, document);
             } else if (Command.valueOf(words[1]) == Command.DELETE){
-                documentStorageService.deleteDocument(schemaName, Integer.parseInt(words[2]));
+                trieInvertedIndex.deleteDocument(schemaName, Integer.parseInt(words[2]));
             } else if (Command.valueOf(words[1]) == Command.UPDATE){
                 // Update method from DocumentStorageService
             }
