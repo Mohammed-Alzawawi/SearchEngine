@@ -2,6 +2,8 @@ package com.example.SearchEngine.document.service;
 
 import com.example.SearchEngine.document.service.Validation.DocumentValidator;
 import com.example.SearchEngine.invertedIndex.InvertedIndex;
+import com.example.SearchEngine.schema.log.Command;
+import com.example.SearchEngine.schema.log.LogUtil;
 import com.example.SearchEngine.utils.storage.FileUtil;
 import com.example.SearchEngine.utils.storage.service.SchemaPathService;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -46,6 +48,7 @@ public class DocumentStorageService {
             }
             FileUtil.createFile(path, content);
             trieInvertedIndex.addDocument(schemaName, document);
+            LogUtil.write(Command.INSERT, jsonNode.get("id").toString(), schemaName);
         } else {
             throw new IllegalStateException("document not valid to schema");
         }
@@ -59,6 +62,7 @@ public class DocumentStorageService {
         path += "documents/" + jsonNode.get("id").toString();
         FileUtil.deleteFile(path);
         trieInvertedIndex.deleteDocument(schemaName, documentId);
+        LogUtil.write(Command.DELETE, jsonNode.get("id").toString(), schemaName);
     }
 
     public Map<String, Object> getDocument(String schemaName, Integer documentId) throws Exception {

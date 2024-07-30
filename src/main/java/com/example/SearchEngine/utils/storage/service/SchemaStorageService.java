@@ -36,7 +36,7 @@ public class SchemaStorageService {
         }
     }
 
-    private void createFile(JsonNode jsonNode) throws Exception {
+    private void createJsonFile(JsonNode jsonNode) throws Exception {
         String folderPath = Constants.Paths.SCHEMA_STORAGE_PATH + jsonNode.get("id").toString();
         String jsonFilePath = folderPath + "/" + jsonNode.get("id").toString() + "_Schema.json";
         String content = null;
@@ -51,6 +51,18 @@ public class SchemaStorageService {
         }
         catch (Exception e) {
             throw new IllegalStateException("Problem with creating the Json File!");
+        }
+    }
+
+    private void createLogFiles(JsonNode jsonNode) throws Exception {
+        String folderPath = Constants.Paths.SCHEMA_STORAGE_PATH + jsonNode.get("id").toString();
+        try {
+            FileUtil.createFile(folderPath + "/" + "log.txt", "");
+            FileUtil.createFile(folderPath + "/" + "currentLog.txt", "");
+            System.out.println("Done creating the Log files");
+        }
+        catch (Exception e) {
+            throw new IllegalStateException("Problem with creating the Log files");
         }
     }
 
@@ -89,7 +101,8 @@ public class SchemaStorageService {
         }
         else {
             createFolder(jsonNode);
-            createFile(jsonNode);
+            createJsonFile(jsonNode);
+            createLogFiles(jsonNode);
             addPathFile(jsonNode);
             System.out.println("- Adding Json to directory is done.");
         }
