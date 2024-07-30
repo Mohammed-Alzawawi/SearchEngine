@@ -5,9 +5,11 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 
 public class FileUtil {
-    public static void createFolder(String folderFullPath){
+    public static void createFolder(String folderFullPath) {
         File folder = new File(folderFullPath);
         if (folder.exists()) {
             throw new IllegalStateException("The Folder is Already Exists");
@@ -32,13 +34,13 @@ public class FileUtil {
         }
     }
 
-    public static void deleteFolder(String folderFullPath){
+    public static void deleteFolder(String folderFullPath) {
         File folder = new File(folderFullPath);
 
         if (folder.exists()) {
-            if (folder.isDirectory() && folder.listFiles() != null){
+            if (folder.isDirectory() && folder.listFiles() != null) {
                 for (File file : folder.listFiles()) {
-                    if (!file.delete()){
+                    if (!file.delete()) {
                         throw new IllegalStateException("Something Went Wrong While Deleting The File");
                     }
                 }
@@ -70,6 +72,19 @@ public class FileUtil {
     public static String readFileContents(String fullPath) throws IOException {
         Path fileName = Path.of(fullPath);
         return Files.readString(fileName);
+    }
+
+    public static List<String> getFilesInDirectory(String path) {
+        List<String> filesPaths = new ArrayList<>();
+        File directory = new File(path);
+
+        if (directory.isDirectory()) {
+            File[] files = directory.listFiles();
+            for (File file : files) {
+                filesPaths.add(file.getName());
+            }
+        }
+        return filesPaths;
     }
 }
 
