@@ -7,7 +7,7 @@ import java.util.HashMap;
 
 @Service
 public class SchemaRoot {
-    private static HashMap<String, TrieNode> roots = new HashMap<>();
+    public static HashMap<String, TrieNode> roots = new HashMap<>();
 
     public static TrieNode getSchemaRoot(String schemaName) {
         if (!roots.containsKey(schemaName)) {

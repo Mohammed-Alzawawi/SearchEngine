@@ -2,6 +2,7 @@ package com.example.SearchEngine.document.controller;
 
 import com.example.SearchEngine.document.service.DocumentStorageService;
 import com.example.SearchEngine.document.service.Validation.DocumentValidator;
+import com.example.SearchEngine.invertedIndex.utility.TrieSerialization;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -12,11 +13,11 @@ import java.util.Map;
 @RequestMapping("schema")
 public class DocumentController {
     @Autowired
-    private DocumentValidator documentValidator;
-    @Autowired
     private ObjectMapper objectMapper;
     @Autowired
     private DocumentStorageService documentStorageService;
+    @Autowired
+    private TrieSerialization trieSerialization ;
 
 
     @PostMapping("/{schemaName}")
@@ -30,5 +31,6 @@ public class DocumentController {
     void deleteDocument(@PathVariable String schemaName, @PathVariable Integer documentId) throws Exception {
         documentStorageService.deleteDocument(schemaName, documentId);
     }
+
 
 }
