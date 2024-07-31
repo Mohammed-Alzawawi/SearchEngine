@@ -1,6 +1,8 @@
 package com.example.SearchEngine.invertedIndex.utility;
 
 import com.example.SearchEngine.invertedIndex.TrieNode;
+import com.example.SearchEngine.schema.log.TrieLogLoader;
+import com.example.SearchEngine.schema.log.TrieLogService;
 import com.example.SearchEngine.schema.util.SchemaRoot;
 import com.example.SearchEngine.utils.storage.FileUtil;
 import com.example.SearchEngine.utils.storage.service.SchemaPathService;
@@ -17,6 +19,12 @@ import static com.example.SearchEngine.Constants.Constants.Paths.SCHEMA_PATH_DIC
 public class TrieSerialization {
     @Autowired
     SchemaPathService schemaPathService;
+    @Autowired
+    TrieLogService trieLogService;
+    @Autowired
+    TrieLogLoader trieLogLoader;
+    @Autowired
+    private SchemaRoot schemaRoot;
 
     public void saveTrie() throws Exception {
         for (String schemaName : SchemaRoot.roots.keySet()) {
@@ -30,6 +38,7 @@ public class TrieSerialization {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+            trieLogService.refresh(schemaName);
         }
     }
 
@@ -42,6 +51,7 @@ public class TrieSerialization {
             } catch (Exception e) {
                 e.printStackTrace();
             }
+            trieLogLoader.load(schemaName);
         }
     }
 

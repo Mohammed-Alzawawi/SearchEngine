@@ -2,6 +2,7 @@ package com.example.SearchEngine.invertedIndex;
 
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.Map;
 
 public class TrieNode implements Serializable {
     private static final long serialVersionUID = 5424601767160570951L;
@@ -55,7 +56,9 @@ public class TrieNode implements Serializable {
     }
 
     public void deleteDocument(Integer documentId) {
-        documents.remove(documentId);
+        if (documents.containsKey(documentId)) {
+            documents.remove(documentId);
+        }
         if (empty()){
             removeEndOfTerm();
         }
