@@ -54,8 +54,9 @@ public class TrieNode {
     }
 
     public void deleteDocument(Integer documentId) {
-        if (documents.containsKey(documentId)) {
-            documents.remove(documentId);
+        documents.remove(documentId);
+        if (empty()){
+            removeEndOfTerm();
         }
     }
 
