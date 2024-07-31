@@ -103,6 +103,7 @@ public class SchemaStorageService {
             createFolder(jsonNode);
             createJsonFile(jsonNode);
             createLogFiles(jsonNode);
+            FileUtil.createFile(Constants.Paths.SCHEMA_STORAGE_PATH + jsonNode.get("id") + "/trie", "");
             addPathFile(jsonNode);
             System.out.println("- Adding Json to directory is done.");
         }

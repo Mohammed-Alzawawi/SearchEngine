@@ -37,6 +37,7 @@ public class TrieLogService {
                 writer.newLine();
             }
             writer.close();
+            reader.close();
         }
         catch (IOException e) {
             throw new IllegalArgumentException(e);
@@ -49,8 +50,6 @@ public class TrieLogService {
             throw new IllegalArgumentException(e);
         }
     }
-
-
 
     @Synchronized("lock")
     private void updateLog(Command command, String documentId, String logPath){
