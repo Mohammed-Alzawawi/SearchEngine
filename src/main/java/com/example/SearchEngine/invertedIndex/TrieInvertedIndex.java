@@ -3,6 +3,8 @@ package com.example.SearchEngine.invertedIndex;
 import com.example.SearchEngine.Analyzers.Analyzer;
 import com.example.SearchEngine.Analyzers.AnalyzerEnum;
 import com.example.SearchEngine.Tokenization.Token;
+import com.example.SearchEngine.invertedIndex.utility.Bm25Calculator;
+import com.example.SearchEngine.invertedIndex.utility.CollectionInfo;
 import com.example.SearchEngine.schema.service.SchemaDefaultService;
 import com.example.SearchEngine.schema.util.SchemaRoot;
 import com.example.SearchEngine.utils.storage.service.SchemaPathService;
@@ -24,12 +26,26 @@ public class TrieInvertedIndex implements InvertedIndex {
     private SchemaRoot schemaRoot;
     @Autowired
     private ObjectMapper mapper;
+    @Autowired
+    private Bm25Calculator bm25Calculator;
 
     private Analyzer getFieldAnalyzer(Map<String, Object> schemaField) {
         return AnalyzerEnum.EnglishAnalyzer.getAnalyzer();
     }
 
-    private TrieNode getWordLastNode(TrieNode root, Token token) {
+    private boolean checkWordExist(TrieNode root, Token token) {
+        TrieNode currentTrieNode = root;
+        for (int i = 0; i < token.getWord().length(); i++) {
+            Character c = token.getWord().charAt(i);
+            if (!currentTrieNode.hasNextNode(c)) {
+                return false;
+            }
+            currentTrieNode = currentTrieNode.getNextNode(c);
+        }
+        return true;
+    }
+
+    private TrieNode getWordLastNode(TrieNode root, Token token){
         TrieNode currentTrieNode = root;
         for (int i = 0; i < token.getWord().length(); i++) {
             Character c = token.getWord().charAt(i);
@@ -38,18 +54,22 @@ public class TrieInvertedIndex implements InvertedIndex {
         return currentTrieNode;
     }
 
+
     private void indexer(TrieNode root, Integer documentId, String fieldName, List<Token> tokens) {
         for (Token token : tokens) {
             TrieNode lastNode = getWordLastNode(root, token);
             lastNode.setEndOfTerm();
             lastNode.updateFieldWeight(fieldName, token.getWeight(), documentId);
+            lastNode.updateFieldWeight("total", token.getWeight(), documentId);
         }
     }
 
     public void remover(List<Token> tokens, TrieNode root, Integer documentId) {
         for (Token token : tokens) {
-            TrieNode lastNode = getWordLastNode(root, token);
-            lastNode.deleteDocument(documentId);
+            if (checkWordExist(root, token)) {
+                TrieNode lastNode = getWordLastNode(root, token);
+                lastNode.deleteDocument(documentId);
+            }
         }
     }
 
@@ -60,6 +80,12 @@ public class TrieInvertedIndex implements InvertedIndex {
 
         for (String fieldName : document.keySet()) {
             List<Token> tokens = getTokens(fieldName, schema, document);
+            if (!tokens.isEmpty()) {
+                CollectionInfo.updateFieldTotalLength(schemaName , fieldName , (long) ((String) document.get(fieldName)).length());
+                CollectionInfo.updateFieldTotalLength(schemaName , "total" , (long) ((String) document.get(fieldName)).length());
+                CollectionInfo.updateDocumentLength(schemaName ,(Integer) document.get("id") , (long) ((String) document.get(fieldName)).length() , fieldName);
+                CollectionInfo.updateDocumentLength(schemaName ,(Integer) document.get("id") , (long) ((String) document.get(fieldName)).length() , "total");
+            }
             indexer(root, (Integer) document.get("id"), fieldName, tokens);
         }
     }
@@ -93,4 +119,27 @@ public class TrieInvertedIndex implements InvertedIndex {
         }
         return tokens;
     }
+
+
+    public  Map<Integer , Double> search(String query , String schemaName ) {
+        Map<Integer , Double> results = new HashMap<>();
+        TrieNode root = schemaRoot.getSchemaRoot(schemaName);
+
+        Analyzer analyzer = AnalyzerEnum.EnglishAnalyzer.getAnalyzer();
+        List<Token> tokens = analyzer.analyze(query , 1.0) ;
+
+        for (Token token : tokens) {
+            TrieNode node = getWordLastNode(root, token);
+            HashMap<Integer, HashMap<String, Double>> documents = node.getDocuments() ;
+            Double df = (double) documents.size();
+            for (Integer documentId : documents.keySet()) {
+                HashMap<String , Double> fields = documents.get(documentId) ;
+                for (String fieldName : fields.keySet()) {
+                    results.put( documentId, results.getOrDefault(documentId , 0.0) + bm25Calculator.CalculateScore(schemaName ,fieldName , documentId , fields.get(fieldName) , df)) ;
+                }
+            }
+        }
+        return  results ;
+    }
+
 }

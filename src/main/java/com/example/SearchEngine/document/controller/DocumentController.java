@@ -31,6 +31,15 @@ public class DocumentController {
     void deleteDocument(@PathVariable String schemaName, @PathVariable Integer documentId) throws Exception {
         documentStorageService.deleteDocument(schemaName, documentId);
     }
+    @GetMapping("/y")
+    void f () throws Exception {
+        trieSerialization.saveTrie();
+    }
+
+    @GetMapping("/x")
+    void g () throws Exception {
+        trieSerialization.loadTrie();
+    }
 
 
 }

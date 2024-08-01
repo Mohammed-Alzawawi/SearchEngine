@@ -2,6 +2,7 @@ package com.example.SearchEngine.document.service;
 
 import com.example.SearchEngine.document.service.Validation.DocumentValidator;
 import com.example.SearchEngine.invertedIndex.InvertedIndex;
+import com.example.SearchEngine.invertedIndex.utility.CollectionInfo;
 import com.example.SearchEngine.schema.log.Command;
 import com.example.SearchEngine.schema.log.TrieLogService;
 import com.example.SearchEngine.utils.storage.FileUtil;
@@ -51,6 +52,7 @@ public class DocumentStorageService {
             FileUtil.createFile(path, content);
             trieInvertedIndex.addDocument(schemaName, document);
             trieLogService.write(Command.INSERT, jsonNode.get("id").toString(), schemaName);
+            CollectionInfo.updateNumberOfDocument(schemaName);
         } else {
             throw new IllegalStateException("document not valid to schema");
         }
