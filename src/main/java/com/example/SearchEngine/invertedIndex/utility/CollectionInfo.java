@@ -1,49 +1,57 @@
 package com.example.SearchEngine.invertedIndex.utility;
 
 import com.example.SearchEngine.Constants.Constants;
+import com.example.SearchEngine.Tokenization.Token;
 import com.example.SearchEngine.utils.storage.FileUtil;
-import org.springframework.stereotype.Service;
 
 import java.io.*;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class CollectionInfo {
     private static Map<String, Integer> numberOfDocument = new HashMap<>();
-    private static Map<String, Map<String, Long>> fieldTotalLength = new HashMap<>();
-    private static Map<String, Map<Integer, Map<String, Long>>> documentInfo = new HashMap<>();
+    private static Map<String, Double> documentsTotalLength = new HashMap<>();
+    private static Map<String, Map<Integer, Double>> documentLength = new HashMap<>();
 
-    public static Long getDocumentLength(String schemaName, Integer documentId, String fieldName) {
-        return documentInfo.getOrDefault(schemaName, new HashMap<>())
-                .getOrDefault(documentId, new HashMap<>())
-                .getOrDefault(fieldName, 0L);
+    public static Double getDocumentLength(String schemaName, Integer documentId) {
+        return documentLength.getOrDefault(schemaName, new HashMap<>())
+                .getOrDefault(documentId, 0.0);
     }
 
-    public static void updateDocumentLength(String schemaName, Integer documentId, Long length, String fieldName) {
-        documentInfo.putIfAbsent(schemaName, new HashMap<>());
-        documentInfo.get(schemaName).putIfAbsent(documentId, new HashMap<>());
-        documentInfo.get(schemaName).get(documentId).put(fieldName, length);
+    public static Double getDocumentsTotalLength(String schemaName) {
+        return documentsTotalLength.getOrDefault(schemaName, 1.0);
     }
 
-    public static Long getFieldTotalLength(String schemaName, String fieldName) {
-        return fieldTotalLength.getOrDefault(schemaName, new HashMap<>())
-                .getOrDefault(fieldName, 0L);
+
+    public static void updateDocumentLength(String schemaName, Integer documentId, Double length) {
+        documentLength.putIfAbsent(schemaName, new HashMap<>());
+        documentLength.get(schemaName).put(documentId, documentLength.get(schemaName).getOrDefault(documentId, 0.0) + length);
+        documentsTotalLength.put(schemaName, documentsTotalLength.getOrDefault(schemaName, 0.0) + length);
     }
 
-    public static void updateFieldTotalLength(String schemaName, String fieldName, Long length) {
-        fieldTotalLength.putIfAbsent(schemaName, new HashMap<>());
-        fieldTotalLength.get(schemaName).putIfAbsent(fieldName, 0L);
-        fieldTotalLength.get(schemaName).put(fieldName, fieldTotalLength.get(schemaName).get(fieldName) + length);
-    }
 
-    public static void updateNumberOfDocument(String schemaName) {
+    public static void updateNumberOfDocument(String schemaName, Integer value) {
         numberOfDocument.putIfAbsent(schemaName, 0);
-        numberOfDocument.put(schemaName, numberOfDocument.get(schemaName) + 1);
+        numberOfDocument.put(schemaName, numberOfDocument.get(schemaName) + value);
     }
 
     public static Integer getNumberOfDocument(String schemaName) {
         return numberOfDocument.getOrDefault(schemaName, 0);
     }
+
+    public static void addField(String schemaName, Integer documentId, List<Token> tokens) {
+        Integer length = tokens.size();
+        Double weight = tokens.get(0).getWeight();
+        updateDocumentLength(schemaName, documentId, weight * length);
+    }
+
+    public static void removeField(String schemaName, Integer documentId, List<Token> tokens) {
+        Integer length = tokens.size();
+        Double weight = tokens.get(0).getWeight();
+        updateDocumentLength(schemaName, documentId, -1 * weight * length);
+    }
+
 
     private static void saveAttribute(Object object, String path) throws Exception {
         if (FileUtil.checkExistence(path)) {
@@ -59,8 +67,8 @@ public class CollectionInfo {
 
     public static void save() throws Exception {
         saveAttribute(numberOfDocument, Constants.Paths.SCHEMA_STORAGE_PATH + "numberOfDocument");
-        saveAttribute(fieldTotalLength, Constants.Paths.SCHEMA_STORAGE_PATH + "fieldTotal");
-        saveAttribute(documentInfo, Constants.Paths.SCHEMA_STORAGE_PATH + "documentInfo");
+        saveAttribute(documentLength, Constants.Paths.SCHEMA_STORAGE_PATH + "documentLength");
+        saveAttribute(documentsTotalLength, Constants.Paths.SCHEMA_STORAGE_PATH + "documentsTotalLength");
     }
 
     private static Object loadAttribute(String path) throws Exception {
@@ -69,12 +77,12 @@ public class CollectionInfo {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return null;
+        return new HashMap<>();
     }
 
     public static void load() throws Exception {
         numberOfDocument = (Map<String, Integer>) loadAttribute(Constants.Paths.SCHEMA_STORAGE_PATH + "numberOfDocument");
-        fieldTotalLength = (Map<String, Map<String, Long>>) loadAttribute(Constants.Paths.SCHEMA_STORAGE_PATH + "fieldTotal");
-        documentInfo = (Map<String, Map<Integer, Map<String, Long>>>) loadAttribute(Constants.Paths.SCHEMA_STORAGE_PATH + "documentInfo");
+        documentsTotalLength = (Map<String, Double>) loadAttribute(Constants.Paths.SCHEMA_STORAGE_PATH + "documentsTotalLength");
+        documentLength = (Map<String, Map<Integer, Double>>) loadAttribute(Constants.Paths.SCHEMA_STORAGE_PATH + "documentLength");
     }
 }
