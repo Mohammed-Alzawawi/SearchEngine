@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -35,9 +36,9 @@ public class DocumentController {
         documentStorageService.deleteDocument(schemaName, documentId);
     }
 
-    @GetMapping("/search/{query}/{schemaName}")
-    void search (@PathVariable String  query , @PathVariable String schemaName) {
-        System.out.println(trieEngine.search(query , schemaName)) ;
+    @PostMapping("/search/{schemaName}")
+    List<Integer> search (@PathVariable String schemaName , @RequestBody String query ) {
+        return trieEngine.search(query , schemaName) ;
     }
 
 
