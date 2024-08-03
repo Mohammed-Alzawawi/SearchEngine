@@ -18,11 +18,15 @@ public class TrieNode implements Serializable {
     }
 
     public TrieNode getNextNode(Character c) {
-        if (nextNodes.containsKey(c)) {
+        if (hasNextNode(c)) {
             return nextNodes.get(c);
         }
         nextNodes.put(c, new TrieNode());
         return nextNodes.get(c);
+    }
+
+    public boolean hasNextNode(Character c) {
+        return nextNodes.containsKey(c);
     }
 
     public boolean empty() {

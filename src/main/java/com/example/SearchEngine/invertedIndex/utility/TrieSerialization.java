@@ -27,6 +27,7 @@ public class TrieSerialization {
     private SchemaRoot schemaRoot;
 
     public void saveTrie() throws Exception {
+        CollectionInfo.save();
         for (String schemaName : SchemaRoot.roots.keySet()) {
             String path = schemaPathService.getSchemaPath(schemaName) + "trie";
             if (FileUtil.checkExistence(path)) {
@@ -43,6 +44,7 @@ public class TrieSerialization {
     }
 
     public void loadTrie() throws Exception {
+        CollectionInfo.load();
         List<String> schemasNames = FileUtil.getFilesInDirectory(SCHEMA_PATH_DICTIONARY_PATH);
         for (String schemaName : schemasNames) {
             String path = schemaPathService.getSchemaPath(schemaName);
