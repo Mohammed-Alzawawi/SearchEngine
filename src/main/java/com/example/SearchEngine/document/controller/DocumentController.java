@@ -1,7 +1,6 @@
 package com.example.SearchEngine.document.controller;
 
 import com.example.SearchEngine.document.service.DocumentStorageService;
-import com.example.SearchEngine.document.service.Validation.DocumentValidator;
 import com.example.SearchEngine.invertedIndex.service.TrieEngine;
 import com.example.SearchEngine.invertedIndex.utility.TrieSerialization;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -19,9 +18,9 @@ public class DocumentController {
     @Autowired
     private DocumentStorageService documentStorageService;
     @Autowired
-    private TrieSerialization trieSerialization ;
+    private TrieSerialization trieSerialization;
     @Autowired
-    private TrieEngine trieEngine ;
+    private TrieEngine trieEngine;
 
 
     @PostMapping("/{schemaName}")
@@ -37,8 +36,13 @@ public class DocumentController {
     }
 
     @PostMapping("/search/{schemaName}")
-    List<Integer> search (@PathVariable String schemaName , @RequestBody String query ) {
-        return trieEngine.search(query , schemaName) ;
+    List<Object> search(@PathVariable String schemaName, @RequestBody String query) throws Exception {
+        return trieEngine.search(query, schemaName);
+    }
+
+    @GetMapping("/load")
+    void load() throws Exception {
+        trieSerialization.loadTrie();
     }
 
 
