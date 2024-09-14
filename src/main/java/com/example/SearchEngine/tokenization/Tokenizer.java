@@ -1,4 +1,4 @@
-package com.example.SearchEngine.Tokenization;
+package com.example.SearchEngine.tokenization;
 
 import java.util.List;
 

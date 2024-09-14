@@ -1,4 +1,4 @@
-package com.example.SearchEngine.Tokenization;
+package com.example.SearchEngine.tokenization;
 
 public class Token {
     private String word;

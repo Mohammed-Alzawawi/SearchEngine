@@ -1,6 +1,6 @@
 package com.example.SearchEngine.schema.log;
 
-import com.example.SearchEngine.Constants.Constants;
+import com.example.SearchEngine.constants.Constants;
 import com.example.SearchEngine.utils.storage.FileUtil;
 import lombok.Synchronized;
 import org.springframework.stereotype.Service;

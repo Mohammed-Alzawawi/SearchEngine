@@ -1,7 +1,7 @@
 package com.example.SearchEngine.invertedIndex;
 
-import com.example.SearchEngine.Analyzers.Analyzer;
-import com.example.SearchEngine.Tokenization.Token;
+import com.example.SearchEngine.analyzers.Analyzer;
+import com.example.SearchEngine.tokenization.Token;
 import com.example.SearchEngine.invertedIndex.utility.CollectionInfo;
 import com.example.SearchEngine.invertedIndex.utility.SchemaAnalyzer;
 import com.example.SearchEngine.schema.service.SchemaDefaultService;

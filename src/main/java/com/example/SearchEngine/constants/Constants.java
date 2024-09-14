@@ -1,4 +1,4 @@
-package com.example.SearchEngine.Constants;
+package com.example.SearchEngine.constants;
 
 public final class Constants {
     private Constants() {

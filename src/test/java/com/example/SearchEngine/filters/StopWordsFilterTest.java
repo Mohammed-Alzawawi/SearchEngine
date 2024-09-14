@@ -1,6 +1,6 @@
-package com.example.SearchEngine.Filters;
+package com.example.SearchEngine.filters;
 
-import com.example.SearchEngine.Tokenization.Token;
+import com.example.SearchEngine.tokenization.Token;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

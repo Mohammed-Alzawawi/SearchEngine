@@ -1,7 +1,7 @@
 package com.example.SearchEngine.invertedIndex.utility;
 
-import com.example.SearchEngine.Analyzers.Analyzer;
-import com.example.SearchEngine.Analyzers.AnalyzerEnum;
+import com.example.SearchEngine.analyzers.Analyzer;
+import com.example.SearchEngine.analyzers.AnalyzerEnum;
 
 public class SchemaAnalyzer {
 

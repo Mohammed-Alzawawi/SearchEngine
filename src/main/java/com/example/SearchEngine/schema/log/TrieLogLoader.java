@@ -1,8 +1,9 @@
 package com.example.SearchEngine.schema.log;
 
-import com.example.SearchEngine.Constants.Constants;
+import com.example.SearchEngine.constants.Constants;
 import com.example.SearchEngine.document.service.DocumentStorageService;
 import com.example.SearchEngine.invertedIndex.InvertedIndex;
+import com.example.SearchEngine.utils.documentFilter.DocumentFilterService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
