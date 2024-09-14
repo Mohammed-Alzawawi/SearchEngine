@@ -18,10 +18,10 @@ import java.util.Map;
 public class QueryValidator implements QueryValidationInterface {
 
     @Autowired
-    SchemaDefaultService schemaDefaultService;
-    DateValidation dateValidation = new DateValidation();
-    LongValidation longValidation = new LongValidation();
-    StringValidation stringValidation = new StringValidation();
+    private SchemaDefaultService schemaDefaultService;
+    private DateValidation dateValidation = new DateValidation();
+    private LongValidation longValidation = new LongValidation();
+    private StringValidation stringValidation = new StringValidation();
 
     public QueryValidator() {
 
