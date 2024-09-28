@@ -34,10 +34,10 @@ public class SchemaDefaultService implements SchemaServiceInterface {
         schemasNames.add(jsonNode.get("name").toString());
     }
 
-    public Map<String, Object> getSchema(String schemaName) throws Exception {
+    public HashMap<String, Object> getSchema(String schemaName) throws Exception {
         String schemaPath;
         schemaPath = schemaPathService.getSchemaPath(schemaName) + schemaName + "_Schema.json";
-        Map<String, Object> schema = mapper.readValue(new File(schemaPath), Map.class);
+        HashMap<String, Object> schema = mapper.readValue(new File(schemaPath), HashMap.class);
         return schema;
     }
 

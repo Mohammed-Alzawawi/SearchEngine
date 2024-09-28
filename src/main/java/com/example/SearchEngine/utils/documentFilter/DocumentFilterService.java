@@ -1,48 +1,87 @@
 package com.example.SearchEngine.utils.documentFilter;
 
 import com.example.SearchEngine.schema.service.SchemaServiceInterface;
+import com.example.SearchEngine.utils.documentFilter.converter.Converter;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class DocumentFilterService {
 
-    private final SchemaServiceInterface schemaService;
-    private HashMap<String, HashMap<String, PropertyBST>> schemaPropertiesBSTs;
+    @Autowired
+    private SchemaServiceInterface schemaService;
 
-    public DocumentFilterService(SchemaServiceInterface schemaService) throws Exception {
-        this.schemaService = schemaService;
-        for (String schemaName : schemaService.getSchemasNames()) {
-            this.schemaPropertiesBSTs.put(schemaName, new HashMap<>());
-            Map<String, Object> schema = schemaService.getSchema(schemaName);
-            Map<String, Object> filters = new HashMap<>();
-            if (schema.containsKey("filters")) {
-                filters = (Map<String, Object>) schema.get("filters");
-            }
+    @Autowired
+    private Converter converter;
+    private HashMap<String, HashMap<String, NavigableSet<DocumentNode>>> schemaPropertiesBSTs = new HashMap<>();
+
+    public void addDocument(String schemaName, HashMap<String, Object> documentJson) throws Exception {
+        HashMap<String, Object> schema = schemaService.getSchema(schemaName);
+        if (schema.get("filters") instanceof HashMap<?,?>) {
+            HashMap<String, Object> filters = (HashMap<String, Object>) schema.get("filters");
+            HashMap<String, Object> properties = (HashMap<String, Object>) schema.get("properties");
             for (String filter : filters.keySet()) {
-                this.schemaPropertiesBSTs.get(schemaName).put(filter, loadPropertyBST(filter));
+                HashMap<String, Object> originalProperty = (HashMap<String, Object>) properties.get(filter);
+                Long convertedValue = converter.convert(documentJson.get(filter), originalProperty.get("type").toString(), filters.get(filter).toString());
+                this.schemaPropertiesBSTs.get(schemaName).get(filter).add(new DocumentNode(convertedValue, (Long) documentJson.get("id")));
             }
         }
-//        schemaPropertiesBSTs = FiltersBuilder.getBSTsFromFileSystem();
-    }
-    private PropertyBST loadPropertyBST(String propertyName) {
-        return new PropertyBST();
     }
 
-    private List<Integer> rangeFiltering(String schema, HashMap<String, Object> ranges) {
-        List<Integer> filteredDocuments = new ArrayList<>();
+    public void removeDocument(String schemaName, HashMap<String, Object> documentJson) throws Exception {
+        HashMap<String, Object> schema = schemaService.getSchema(schemaName);
+        if (schema.get("filters") instanceof HashMap<?,?>) {
+            HashMap<String, Object> filters = (HashMap<String, Object>) schema.get("filters");
+            HashMap<String, Object> properties = (HashMap<String, Object>) schema.get("properties");
+            for (String filter : filters.keySet()) {
+                HashMap<String, Object> originalProperty = (HashMap<String, Object>) properties.get(filter);
+                Long convertedValue = converter.convert(documentJson.get(filter), originalProperty.get("type").toString(), filters.get(filter).toString());
+                this.schemaPropertiesBSTs.get(schemaName).get(filter).remove(new DocumentNode(convertedValue, (Long) documentJson.get("id")));
+            }
+        }
+    }
+    private List<Long> rangeFiltering(String schemaName, HashMap<String, HashMap<String, Long>> ranges) {
+        List<Long> filteredDocuments = new ArrayList<>();
         for (String property : ranges.keySet()) {
-            schemaPropertiesBSTs.get(schema).get(property);
+            NavigableSet<DocumentNode> propertyBST = schemaPropertiesBSTs.get(schemaName).get(property);
+//            "-inf" and "inf" case
+            Long min = ranges.get(property).get("min");
+            Long max = ranges.get(property).get("max");
+            SortedSet<DocumentNode> RangeSubSet = propertyBST.subSet(new DocumentNode(min, Long.MIN_VALUE), true, new DocumentNode(max, Long.MAX_VALUE), true);
+            List<Long> documentsInRange = new ArrayList<>();
+            for (DocumentNode documentNode : RangeSubSet) {
+                documentsInRange.add(documentNode.getSecond());
+            }
+            Collections.sort(documentsInRange);
+            filteredDocuments = mergeTwoLists(filteredDocuments, documentsInRange);
         }
         return filteredDocuments;
     }
-    public List<Integer> getDocuments(HashMap<String, Object> filters) {
-        List<Integer> filteredDocuments = new ArrayList<>();
 
+    public List<Long> getDocuments(String schemaName, HashMap<String, Object> filters) {
+        HashMap<String, HashMap<String, Long>> ranges = (HashMap<String, HashMap<String, Long>>) filters.get("rangeFilter");
+        List<Long> filteredDocuments = rangeFiltering(schemaName, ranges);
         return filteredDocuments;
     }
+
+    private List<Long> mergeTwoLists(List<Long> firstRange, List<Long> secondRange) {
+        List<Long> result = new ArrayList<>();
+        int pointer1 = 0, pointer2 = 0;
+        Long max = Long.max(firstRange.get(pointer1), secondRange.get(pointer2));
+        pointer1 = Collections.binarySearch(firstRange, max);
+        pointer2 = Collections.binarySearch(secondRange, max);
+        while (pointer1 < firstRange.size() && pointer2 < secondRange.size()) {
+            while (pointer1 < firstRange.size() && pointer2 < secondRange.size() && firstRange.get(pointer1) == secondRange.get(pointer2)) {
+                result.add(firstRange.get(pointer1));
+                pointer1++;
+                pointer2++;
+            }
+            max = Long.max(firstRange.get(pointer1), secondRange.get(pointer2));
+            pointer1 = Collections.binarySearch(firstRange, max);
+            pointer2 = Collections.binarySearch(secondRange, max);
+        }
+        return result;
+    };
 }

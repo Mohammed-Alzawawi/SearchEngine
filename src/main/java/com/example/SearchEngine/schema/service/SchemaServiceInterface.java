@@ -9,6 +9,6 @@ import java.util.Map;
 public interface SchemaServiceInterface {
     public void addNewSchema(HashMap<String, Object> jsonObject) throws Exception;
 
-    public Map<String, Object> getSchema(String schemaName) throws Exception;
+    public HashMap<String, Object> getSchema(String schemaName) throws Exception;
     public List<String> getSchemasNames();
 }
