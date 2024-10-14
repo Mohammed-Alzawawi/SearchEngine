@@ -1,12 +1,14 @@
 package com.example.SearchEngine.invertedIndex.service;
 
 import com.example.SearchEngine.analyzers.Analyzer;
-import com.example.SearchEngine.tokenization.Token;
+import com.example.SearchEngine.analyzers.AnalyzerEnum;
 import com.example.SearchEngine.document.service.DocumentStorageService;
 import com.example.SearchEngine.invertedIndex.TrieInvertedIndex;
 import com.example.SearchEngine.invertedIndex.TrieNode;
+import com.example.SearchEngine.invertedIndex.service.fuzzySearch.FuzzyTrie;
 import com.example.SearchEngine.invertedIndex.utility.SchemaAnalyzer;
 import com.example.SearchEngine.schema.util.SchemaRoot;
+import com.example.SearchEngine.tokenization.Token;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,6 +25,8 @@ public class TrieEngine implements InvertedIndexEngine {
     Ranker bm25Ranker;
     @Autowired
     DocumentStorageService documentStorageService;
+    @Autowired
+    FuzzyTrie fuzzyTrie;
 
     private List<Integer> gitRelevantDocuments(List<Token> tokens, TrieNode root, String schemaName) {
         HashMap<Integer, Double> documentsScores = new HashMap<>();
@@ -43,8 +47,20 @@ public class TrieEngine implements InvertedIndexEngine {
 
     @Override
     public List<Object> search(String query, String schemaName) throws Exception {
-        Analyzer analyzer = SchemaAnalyzer.getAnalyzer(schemaName);
+        Analyzer analyzer = AnalyzerEnum.DefaultAnalyzer.getAnalyzer();
         List<Token> tokens = analyzer.analyze(query, 1.0);
+        List<String> words = new ArrayList<>();
+        tokens.forEach(token -> {
+            words.addAll(fuzzyTrie.findMostSimilarWord(token.getWord(), schemaName));
+        });
+
+        tokens.clear();
+        Analyzer schemaAnalyzer = SchemaAnalyzer.getAnalyzer(schemaName);
+        words.forEach(word -> {
+            schemaAnalyzer.analyze(word, 1.0).forEach(token -> {
+                tokens.add(token);
+            });
+        });
         TrieNode root = SchemaRoot.getSchemaRoot(schemaName);
         List<Integer> documentsId = gitRelevantDocuments(tokens, root, schemaName);
         List<Object> relevantDocuments = new ArrayList<>();

@@ -1,6 +1,7 @@
 package com.example.SearchEngine.invertedIndex;
 
 import com.example.SearchEngine.analyzers.Analyzer;
+import com.example.SearchEngine.invertedIndex.service.fuzzySearch.FuzzyTrie;
 import com.example.SearchEngine.tokenization.Token;
 import com.example.SearchEngine.invertedIndex.utility.CollectionInfo;
 import com.example.SearchEngine.invertedIndex.utility.SchemaAnalyzer;
@@ -27,6 +28,8 @@ public class TrieInvertedIndex implements InvertedIndex {
     private SchemaRoot schemaRoot;
     @Autowired
     private ObjectMapper mapper;
+    @Autowired
+    private FuzzyTrie fuzzyTrie;
 
 
     public boolean checkWordExist(TrieNode root, Token token) {
@@ -75,6 +78,7 @@ public class TrieInvertedIndex implements InvertedIndex {
         for (String fieldName : document.keySet()) {
             List<Token> tokens = getTokens(schemaName, fieldName, document);
             if (!tokens.isEmpty()) {
+                fuzzyTrie.addField((String)document.get(fieldName) , schemaName );
                 CollectionInfo.addField(schemaName, (Integer) document.get("id"), tokens);
             }
             indexer(root, (Integer) document.get("id"), fieldName, tokens);
@@ -91,6 +95,7 @@ public class TrieInvertedIndex implements InvertedIndex {
         for (String fieldName : document.keySet()) {
             List<Token> tokens = getTokens(schemaName, fieldName, document);
             if (!tokens.isEmpty()) {
+                fuzzyTrie.removeField((String)document.get(fieldName) , schemaName );
                 CollectionInfo.removeField(schemaName, (Integer) document.get("id"), tokens);
             }
             remover(tokens, root, documentId);
