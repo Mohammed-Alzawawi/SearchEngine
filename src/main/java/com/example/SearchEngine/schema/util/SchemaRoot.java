@@ -5,7 +5,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 
-@Service
+
 public class SchemaRoot {
     public static HashMap<String, TrieNode> roots = new HashMap<>();
 

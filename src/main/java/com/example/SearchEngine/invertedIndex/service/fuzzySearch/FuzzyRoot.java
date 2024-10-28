@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 import java.util.HashMap;
 
 public class FuzzyRoot {
-    private static HashMap<String, FuzzyNode> roots = new HashMap<>();
+    public static HashMap<String, FuzzyNode> roots = new HashMap<>();
 
     public static FuzzyNode getRoot(String schemaName) {
         if (!roots.containsKey(schemaName)) {
