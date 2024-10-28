@@ -26,8 +26,6 @@ public class TrieInvertedIndex implements InvertedIndex {
     @Autowired
     private SchemaPathService schemaPathService;
     @Autowired
-    private SchemaRoot schemaRoot;
-    @Autowired
     private ObjectMapper mapper;
     @Autowired
     private FuzzyTrie fuzzyTrie;
@@ -76,7 +74,7 @@ public class TrieInvertedIndex implements InvertedIndex {
 
     @Override
     public void addDocument(String schemaName, Map<String, Object> document) throws Exception {
-        TrieNode root = schemaRoot.getSchemaRoot(schemaName);
+        TrieNode root = SchemaRoot.getSchemaRoot(schemaName);
         CollectionInfo.updateNumberOfDocument(schemaName, 1);
         for (String fieldName : document.keySet()) {
             List<Token> tokens = getTokens(schemaName, fieldName, document);
@@ -94,7 +92,7 @@ public class TrieInvertedIndex implements InvertedIndex {
         String path = schemaPathService.getSchemaPath(schemaName) + "documents/" + documentId;
         CollectionInfo.updateNumberOfDocument(schemaName, -1);
         Map<String, Object> document = mapper.readValue(new File(path), Map.class);
-        TrieNode root = schemaRoot.getSchemaRoot(schemaName);
+        TrieNode root = SchemaRoot.getSchemaRoot(schemaName);
 
         for (String fieldName : document.keySet()) {
             List<Token> tokens = getTokens(schemaName, fieldName, document);
