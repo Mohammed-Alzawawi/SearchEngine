@@ -1,7 +1,9 @@
 package com.example.SearchEngine.utils.documentFilter;
 
-public class DocumentNode implements Comparable<DocumentNode> {
+import java.io.Serializable;
 
+public class DocumentNode implements Comparable<DocumentNode>, Serializable {
+    private static final long serialVersionUID = 3959359313312146859L;
     private Long first;
     private Long second;
 
@@ -32,5 +34,13 @@ public class DocumentNode implements Comparable<DocumentNode> {
     @Override
     public int compareTo(DocumentNode other) {
         return Long.compare(this.getFirst(), other.getFirst());
+    }
+
+    @Override
+    public String toString() {
+        return "DocumentNode{" +
+                "first=" + first +
+                ", second=" + second +
+                '}';
     }
 }

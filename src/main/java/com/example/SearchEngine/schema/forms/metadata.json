@@ -7,6 +7,11 @@
         "keyword",
         "text"
     ],
+    "filterConverters":[
+        "timestamp",
+        "size",
+        "null"
+    ],
     "typesInJava": {
         "array": "Array",
         "boolean": "Boolean",

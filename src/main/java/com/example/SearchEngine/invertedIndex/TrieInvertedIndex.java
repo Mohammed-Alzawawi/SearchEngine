@@ -7,6 +7,7 @@ import com.example.SearchEngine.invertedIndex.utility.CollectionInfo;
 import com.example.SearchEngine.invertedIndex.utility.SchemaAnalyzer;
 import com.example.SearchEngine.schema.service.SchemaDefaultService;
 import com.example.SearchEngine.schema.util.SchemaRoot;
+import com.example.SearchEngine.utils.documentFilter.DocumentFilterService;
 import com.example.SearchEngine.utils.storage.service.SchemaPathService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +31,8 @@ public class TrieInvertedIndex implements InvertedIndex {
     private ObjectMapper mapper;
     @Autowired
     private FuzzyTrie fuzzyTrie;
+    @Autowired
+    private DocumentFilterService documentFilterService;
 
 
     public boolean checkWordExist(TrieNode root, Token token) {
@@ -83,6 +86,7 @@ public class TrieInvertedIndex implements InvertedIndex {
             }
             indexer(root, (Integer) document.get("id"), fieldName, tokens);
         }
+
     }
 
     @Override

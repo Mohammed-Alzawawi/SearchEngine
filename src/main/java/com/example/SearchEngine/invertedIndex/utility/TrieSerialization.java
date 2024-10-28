@@ -4,6 +4,7 @@ import com.example.SearchEngine.invertedIndex.TrieNode;
 import com.example.SearchEngine.schema.log.TrieLogLoader;
 import com.example.SearchEngine.schema.log.TrieLogService;
 import com.example.SearchEngine.schema.util.SchemaRoot;
+import com.example.SearchEngine.utils.documentFilter.DocumentFilterService;
 import com.example.SearchEngine.utils.storage.FileUtil;
 import com.example.SearchEngine.utils.storage.service.SchemaPathService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +26,8 @@ public class TrieSerialization {
     TrieLogLoader trieLogLoader;
     @Autowired
     private SchemaRoot schemaRoot;
+    @Autowired
+    private DocumentFilterService documentFilterService;
 
     public void saveTrie() throws Exception {
         CollectionInfo.save();
@@ -41,6 +44,7 @@ public class TrieSerialization {
             }
             trieLogService.refresh(schemaName);
         }
+        documentFilterService.savePropertiesBSTs();
     }
 
     public void loadTrie() throws Exception {
@@ -53,8 +57,10 @@ public class TrieSerialization {
             } catch (Exception e) {
                 e.printStackTrace();
             }
+
             trieLogLoader.load(schemaName);
         }
+        documentFilterService.loadPropertiesBSTs();
     }
 
 }
