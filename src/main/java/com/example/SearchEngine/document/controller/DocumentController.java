@@ -45,5 +45,10 @@ public class DocumentController {
         trieSerialization.loadTrie();
     }
 
+    @GetMapping("/save")
+    void save() throws Exception {
+        trieSerialization.saveTrie();
+    }
+
 
 }
