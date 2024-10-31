@@ -12,6 +12,7 @@ import com.example.SearchEngine.invertedIndex.utility.SchemaAnalyzer;
 import com.example.SearchEngine.schema.util.SchemaRoot;
 import com.example.SearchEngine.Tokenization.Token;
 import com.example.SearchEngine.utils.documentFilter.DocumentFilterService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

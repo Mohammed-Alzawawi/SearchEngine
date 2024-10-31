@@ -29,7 +29,6 @@ public class QueryValidator implements QueryValidationInterface {
 
     private boolean checkRange(Map<String, Object> rangeFilters, Map<String, Object> schema) {
         Map<String, Object> schemaFilters = (Map<String, Object>) schema.get("filters");
-
         for (String key : rangeFilters.keySet()) {
             if (!schemaFilters.containsKey(key)) {
                 return false;

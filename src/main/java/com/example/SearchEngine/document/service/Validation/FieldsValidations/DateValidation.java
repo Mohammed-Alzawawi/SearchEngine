@@ -23,5 +23,4 @@ public class DateValidation implements FieldValidation {
     public  String getFormat() {
         return format;
     }
-
 }

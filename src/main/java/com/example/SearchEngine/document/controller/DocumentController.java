@@ -2,6 +2,7 @@ package com.example.SearchEngine.document.controller;
 
 import com.example.SearchEngine.document.service.DocumentStorageService;
 import com.example.SearchEngine.invertedIndex.service.search.TrieEngine;
+import com.example.SearchEngine.invertedIndex.service.query.QueryValidator;
 import com.example.SearchEngine.invertedIndex.utility.TrieSerialization;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,8 @@ public class DocumentController {
     private TrieSerialization trieSerialization;
     @Autowired
     private TrieEngine trieEngine;
+    @Autowired
+    private QueryValidator queryValidator;
 
 
     @PostMapping("/{schemaName}")
