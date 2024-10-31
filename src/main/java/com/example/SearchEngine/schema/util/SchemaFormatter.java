@@ -1,6 +1,6 @@
 package com.example.SearchEngine.schema.util;
 
-import com.example.SearchEngine.constants.Constants;
+import com.example.SearchEngine.Constants.Constants;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.File;

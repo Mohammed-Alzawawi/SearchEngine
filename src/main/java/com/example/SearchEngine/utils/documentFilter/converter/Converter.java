@@ -9,7 +9,7 @@ import java.util.HashMap;
 public class Converter {
     private final HashMap<String, TypeConverterInterface> converters = new HashMap<>();
 
-    public Converter() throws NoSuchMethodException {
+    public Converter() {
         this.converters.put("timestamp", new DateToTimestamp());
         this.converters.put("size", new ObjectToSize());
     }

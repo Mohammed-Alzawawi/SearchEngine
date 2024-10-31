@@ -1,6 +1,6 @@
-package com.example.SearchEngine.filters;
+package com.example.SearchEngine.Filters;
 
-import com.example.SearchEngine.tokenization.Token;
+import com.example.SearchEngine.Tokenization.Token;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 

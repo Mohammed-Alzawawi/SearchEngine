@@ -1,4 +1,4 @@
-package com.example.SearchEngine.tokenization;
+package com.example.SearchEngine.Tokenization;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;

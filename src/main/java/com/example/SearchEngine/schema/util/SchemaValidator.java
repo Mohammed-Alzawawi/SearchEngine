@@ -4,7 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
-import com.example.SearchEngine.constants.Constants.*;
+import com.example.SearchEngine.Constants.Constants.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.stereotype.Component;
 

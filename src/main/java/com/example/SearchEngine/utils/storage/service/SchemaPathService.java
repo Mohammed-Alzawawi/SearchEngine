@@ -1,6 +1,6 @@
 package com.example.SearchEngine.utils.storage.service;
 
-import com.example.SearchEngine.constants.Constants.*;
+import com.example.SearchEngine.Constants.Constants.*;
 import com.example.SearchEngine.utils.storage.FileUtil;
 import org.springframework.stereotype.Service;
 

@@ -33,7 +33,10 @@ public class DocumentNode implements Comparable<DocumentNode>, Serializable {
 
     @Override
     public int compareTo(DocumentNode other) {
-        return Long.compare(this.getFirst(), other.getFirst());
+        if (Long.compare(this.getFirst(), other.getFirst()) != 0) {
+            return Long.compare(this.getFirst(), other.getFirst());
+        }
+        return Long.compare(this.getSecond(), other.getSecond());
     }
 
     @Override

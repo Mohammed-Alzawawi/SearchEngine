@@ -1,9 +1,9 @@
-package com.example.SearchEngine.analyzers;
+package com.example.SearchEngine.Analyzers;
 
-import com.example.SearchEngine.filters.LowerCaseFilter;
-import com.example.SearchEngine.filters.StemmingFilter;
-import com.example.SearchEngine.filters.StopWordsFilter;
-import com.example.SearchEngine.tokenization.SimpleTokenizer;
+import com.example.SearchEngine.Filters.LowerCaseFilter;
+import com.example.SearchEngine.Filters.StemmingFilter;
+import com.example.SearchEngine.Filters.StopWordsFilter;
+import com.example.SearchEngine.Tokenization.SimpleTokenizer;
 
 import java.util.List;
 

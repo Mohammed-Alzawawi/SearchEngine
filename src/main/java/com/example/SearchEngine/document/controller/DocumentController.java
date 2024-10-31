@@ -1,12 +1,13 @@
 package com.example.SearchEngine.document.controller;
 
 import com.example.SearchEngine.document.service.DocumentStorageService;
-import com.example.SearchEngine.invertedIndex.service.TrieEngine;
+import com.example.SearchEngine.invertedIndex.service.search.TrieEngine;
 import com.example.SearchEngine.invertedIndex.utility.TrieSerialization;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -36,7 +37,7 @@ public class DocumentController {
     }
 
     @PostMapping("/search/{schemaName}")
-    List<Object> search(@PathVariable String schemaName, @RequestBody String query) throws Exception {
+    List<Object> search(@PathVariable String schemaName, @RequestBody HashMap<String, Object> query) throws Exception {
         return trieEngine.search(query, schemaName);
     }
 

@@ -1,7 +1,7 @@
 package com.example.SearchEngine.invertedIndex.utility;
 
-import com.example.SearchEngine.constants.Constants;
-import com.example.SearchEngine.tokenization.Token;
+import com.example.SearchEngine.Constants.Constants;
+import com.example.SearchEngine.Tokenization.Token;
 import com.example.SearchEngine.utils.storage.FileUtil;
 
 import java.io.*;

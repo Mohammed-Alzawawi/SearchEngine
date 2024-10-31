@@ -1,11 +1,10 @@
 package com.example.SearchEngine.invertedIndex.service.fuzzySearch;
 
-import com.example.SearchEngine.analyzers.AnalyzerEnum;
-import com.example.SearchEngine.tokenization.Token;
+import com.example.SearchEngine.Analyzers.AnalyzerEnum;
+import com.example.SearchEngine.Tokenization.Token;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 

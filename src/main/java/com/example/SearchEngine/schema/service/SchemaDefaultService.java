@@ -25,8 +25,6 @@ public class SchemaDefaultService implements SchemaServiceInterface {
     private SchemaPathService schemaPathService;
     @Autowired
     private ObjectMapper mapper;
-    @Autowired
-    private DocumentFilterService documentFilterService;
 
     private List<String> schemasNames = new ArrayList<>();
 
@@ -35,7 +33,6 @@ public class SchemaDefaultService implements SchemaServiceInterface {
         JsonNode jsonNode = mapper.convertValue(jsonObject, JsonNode.class);
         schemaStorageService.saveSchemaFile(jsonNode);
         schemasNames.add(jsonNode.get("name").toString());
-        documentFilterService.addNewSchema(jsonObject);
     }
 
     public HashMap<String, Object> getSchema(String schemaName) throws Exception {

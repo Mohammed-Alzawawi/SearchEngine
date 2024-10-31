@@ -1,6 +1,6 @@
-package com.example.SearchEngine.filters;
+package com.example.SearchEngine.Filters;
 
-import com.example.SearchEngine.tokenization.Token;
+import com.example.SearchEngine.Tokenization.Token;
 import opennlp.tools.stemmer.snowball.SnowballStemmer;
 
 import java.util.List;

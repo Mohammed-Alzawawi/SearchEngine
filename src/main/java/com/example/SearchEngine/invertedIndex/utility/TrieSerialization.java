@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service;
 import java.io.*;
 import java.util.List;
 
-import static com.example.SearchEngine.constants.Constants.Paths.SCHEMA_PATH_DICTIONARY_PATH;
+import static com.example.SearchEngine.Constants.Constants.Paths.SCHEMA_PATH_DICTIONARY_PATH;
 
 
 @Service
@@ -26,7 +26,6 @@ public class TrieSerialization {
     TrieLogService trieLogService;
     @Autowired
     TrieLogLoader trieLogLoader;
-    private SchemaRoot schemaRoot;
     @Autowired
     private DocumentFilterService documentFilterService;
 

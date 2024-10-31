@@ -1,8 +1,8 @@
-package com.example.SearchEngine.analyzers;
+package com.example.SearchEngine.Analyzers;
 
-import com.example.SearchEngine.filters.Filter;
-import com.example.SearchEngine.tokenization.Token;
-import com.example.SearchEngine.tokenization.Tokenizer;
+import com.example.SearchEngine.Filters.Filter;
+import com.example.SearchEngine.Tokenization.Token;
+import com.example.SearchEngine.Tokenization.Tokenizer;
 
 import java.util.ArrayList;
 import java.util.List;
