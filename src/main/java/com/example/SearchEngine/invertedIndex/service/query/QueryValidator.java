@@ -28,8 +28,7 @@ public class QueryValidator implements QueryValidationInterface {
     }
 
     private boolean checkRange(Map<String, Object> rangeFilters, Map<String, Object> schema) {
-        Map<String, Object> schemaFilters = (Map<String, Object>) schema.get("filteredBy");
-
+        Map<String, Object> schemaFilters = (Map<String, Object>) schema.get("filters");
         for (String key : rangeFilters.keySet()) {
             if (!schemaFilters.containsKey(key)) {
                 return false;
@@ -60,7 +59,7 @@ public class QueryValidator implements QueryValidationInterface {
 
     private boolean checkMatch(Map<String, Object> matchFilters, Map<String, Object> schema) {
         TypeChecker typeChecker = new TypeChecker();
-        Map<String, Object> schemaFilters = (Map<String, Object>) schema.get("filteredBy");
+        Map<String, Object> schemaFilters = (Map<String, Object>) schema.get("filters");
         Map<String, Object> schemaProperties = (Map<String, Object>) schema.get("properties");
 
         for (String key : matchFilters.keySet()) {
@@ -82,6 +81,7 @@ public class QueryValidator implements QueryValidationInterface {
 
         Map<String, Object> schema = (Map<String, Object>) schemaDefaultService.getSchema(schemaName);
         if (query.containsKey("query") && !stringValidation.validate(query.get("query"))) {
+            System.out.println("wrong text");
             return false;
         }
 
@@ -89,7 +89,8 @@ public class QueryValidator implements QueryValidationInterface {
             return  true ;
         }
 
-        if (!schema.containsKey("filteredBy")) {
+        if (!schema.containsKey("filters")) {
+            System.out.println("22");
             return  false ;
         }
 
@@ -97,10 +98,12 @@ public class QueryValidator implements QueryValidationInterface {
         for (String key : filters.keySet()) {
             if (key.equals("range")) {
                 if (!checkRange((Map<String, Object>) filters.get("range"), schema)) {
+                    System.out.println("33");
                     return false;
                 }
             } else if (key.equals("match")) {
                 if (!checkMatch((Map<String, Object>) filters.get("match"), schema)) {
+                    System.out.println("44");
                     return false;
                 }
             }

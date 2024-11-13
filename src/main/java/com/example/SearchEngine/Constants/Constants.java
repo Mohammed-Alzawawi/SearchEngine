@@ -11,6 +11,7 @@ public final class Constants {
         public static final String SCHEMA_FORMS_PATH = "src/main/java/com/example/SearchEngine/schema/forms/";
         public static final String SCHEMA_STORAGE_PATH = "C:/Search Engine/Directory/";
         public static final String SCHEMA_PATH_DICTIONARY_PATH = "C:/Search Engine/Externals/Path Directory/";
+        public static final String SCHEMA_PROPERTIES_BSTs_PATH = "C:/Search Engine/Externals/PropertiesBSTs/";
     }
 
     public static final class Messages {

@@ -1,4 +1,4 @@
-package com.example.SearchEngine.invertedIndex.service;
+package com.example.SearchEngine.invertedIndex.service.ranking;
 
 import java.util.HashMap;
 import java.util.List;

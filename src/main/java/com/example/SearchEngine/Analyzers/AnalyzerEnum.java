@@ -9,7 +9,8 @@ import java.util.List;
 
 public enum AnalyzerEnum {
 
-    EnglishAnalyzer(new SimpleAnalyzer(new SimpleTokenizer(), List.of(new StopWordsFilter(), new StemmingFilter(), new LowerCaseFilter())));
+    DefaultAnalyzer(new SimpleAnalyzer(new SimpleTokenizer(), List.of(new LowerCaseFilter(), new StopWordsFilter()))),
+    EnglishAnalyzer(new SimpleAnalyzer(new SimpleTokenizer(), List.of(new LowerCaseFilter(), new StopWordsFilter(), new StemmingFilter())));
 
     private final SimpleAnalyzer analyzer;
 

@@ -32,5 +32,13 @@
             "mandatory": true,
             "wight": 1
         }
+    },
+    "filters": {
+        "publication_date" : {
+            "converter": "timestamp"
+        },
+        "content": {
+            "converter": "size"
+        }
     }
 }

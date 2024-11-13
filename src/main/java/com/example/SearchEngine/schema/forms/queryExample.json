@@ -1,0 +1,19 @@
+{
+    "match": {
+        "author": "Ahmad"
+    },
+    "rangeFilter": {
+        "date": {
+            "min": 23627183123,
+            "max": 23627187123
+        },
+        "content": {
+            "min": 100,
+            "max": 1000
+        },
+        "something": {
+            "min": "-inf",
+            "max": 1000
+        }
+    }
+}
