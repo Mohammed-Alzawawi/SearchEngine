@@ -41,7 +41,7 @@ public class DocumentStorageService {
             String path = schemaPathService.getSchemaPath(schemaName);
 
             long threadId = Thread.currentThread().getId();
-            String id = snowflake.generate(threadId);
+            Long id = snowflake.generate(threadId);
             document.put("id", id);
             JsonNode jsonNode = mapper.convertValue(document, JsonNode.class);
             path += "documents/" + jsonNode.get("id").toString();
@@ -51,7 +51,7 @@ public class DocumentStorageService {
             } catch (JsonProcessingException e) {
                 throw new IllegalArgumentException("Error writing json file");
             }
-            if (CollectionInfo.isDocumentExist(schemaName , (Integer)document.get("id"))) {
+            if (CollectionInfo.isDocumentExist(schemaName , (Long)document.get("id"))) {
                 throw new IllegalStateException("this document already exists");
             }
             FileUtil.createFile(path, content);
@@ -63,7 +63,7 @@ public class DocumentStorageService {
         }
     }
 
-    public void deleteDocument(String schemaName, Integer documentId) throws Exception {
+    public void deleteDocument(String schemaName, Long documentId) throws Exception {
         if (!CollectionInfo.isDocumentExist(schemaName , documentId) ) {
             throw new IllegalStateException("this document not exists");
         }
@@ -74,12 +74,12 @@ public class DocumentStorageService {
         trieLogService.write(Command.DELETE,documentId.toString(), schemaName);
     }
 
-    public  void updateDocument(String schemaName, Integer documentId, Map<String, Object> newDocument) throws Exception {
+    public  void updateDocument(String schemaName, Long documentId, Map<String, Object> newDocument) throws Exception {
         deleteDocument(schemaName, documentId);
         addDocument(schemaName, newDocument);
     }
 
-    public Map<String, Object> getDocument(String schemaName, Integer documentId) throws Exception {
+    public Map<String, Object> getDocument(String schemaName, Long documentId) throws Exception {
         String path = schemaPathService.getSchemaPath(schemaName);
         path += "documents/" + documentId.toString();
         String content = FileUtil.readFileContents(path);

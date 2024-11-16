@@ -11,7 +11,7 @@ public class Snowflake {
     private static Long lastTimestamp = null;
     private static final Long maxStep = 5L;
 
-    public synchronized String generate(Long threadId){
+    public synchronized Long generate(Long threadId){
         Long currentTimestamp = getCurrentTimestamp();
         if (currentTimestamp.equals(lastTimestamp)){
             step++;
@@ -30,7 +30,7 @@ public class Snowflake {
         }
 
         lastTimestamp = currentTimestamp;
-        return currentTimestamp.toString() + threadId + step.toString();
+        return Long.parseLong(currentTimestamp.toString() + threadId + step.toString());
     }
 
     private Long getCurrentTimestamp(){

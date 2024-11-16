@@ -23,19 +23,17 @@ public class DocumentController {
     private TrieSerialization trieSerialization;
     @Autowired
     private TrieEngine trieEngine;
-    @Autowired
-    private QueryValidator queryValidator;
 
 
     @PostMapping("/add/{schemaName}")
-    Map<String, Object> addDoc(@PathVariable String schemaName, @RequestBody String JsonArticle) throws Exception {
+    Map<String, Object> addDocument(@PathVariable String schemaName, @RequestBody String JsonArticle) throws Exception {
         Map<String, Object> json = objectMapper.readValue(JsonArticle, Map.class);
         documentStorageService.addDocument(schemaName, json);
         return json;
     }
 
     @PostMapping("/delete/{schemaName}/{documentId}")
-    void deleteDocument(@PathVariable String schemaName, @PathVariable Integer documentId) throws Exception {
+    void deleteDocument(@PathVariable String schemaName, @PathVariable Long documentId) throws Exception {
         documentStorageService.deleteDocument(schemaName, documentId);
     }
 
@@ -57,7 +55,7 @@ public class DocumentController {
     @PostMapping("/update")
     void updateDocument(@RequestBody Map<String, Object> json) throws Exception {
         String schemaName = json.get("schemaName").toString();
-        Integer documentId =Integer.parseInt(json.get("documentId").toString());
+        Long documentId =Long.parseLong(json.get("documentId").toString());
         Map<String , Object> newDocument = (Map<String, Object>) json.get("newDocument") ;
         documentStorageService.updateDocument(schemaName, documentId, newDocument);
 
