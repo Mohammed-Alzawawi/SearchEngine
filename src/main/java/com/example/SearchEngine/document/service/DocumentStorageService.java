@@ -7,6 +7,7 @@ import com.example.SearchEngine.schema.log.Command;
 import com.example.SearchEngine.schema.log.TrieLogService;
 import com.example.SearchEngine.utils.documentFilter.DocumentFilterService;
 import com.example.SearchEngine.utils.storage.FileUtil;
+import com.example.SearchEngine.utils.storage.Snowflake;
 import com.example.SearchEngine.utils.storage.service.SchemaPathService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -32,19 +33,17 @@ public class DocumentStorageService {
     private TrieLogService trieLogService;
     @Autowired
     private DocumentFilterService documentFilterService;
-
-    private void checkID(JsonNode jsonNode) {
-        if (!jsonNode.has("id") || (!jsonNode.get("id").isInt() && !jsonNode.get("id").isLong())) {
-            throw new IllegalStateException("ID not found");
-        }
-    }
+    @Autowired
+    private Snowflake snowflake;
 
     public void addDocument(String schemaName, Map<String, Object> document) throws Exception {
         if (documentValidator.validate(schemaName, document)) {
             String path = schemaPathService.getSchemaPath(schemaName);
 
+            long threadId = Thread.currentThread().getId();
+            String id = snowflake.generate(threadId);
+            document.put("id", id);
             JsonNode jsonNode = mapper.convertValue(document, JsonNode.class);
-            checkID(jsonNode);
             path += "documents/" + jsonNode.get("id").toString();
             String content;
             try {
