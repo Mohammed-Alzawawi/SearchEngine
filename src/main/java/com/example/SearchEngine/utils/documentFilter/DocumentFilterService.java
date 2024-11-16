@@ -55,8 +55,8 @@ public class DocumentFilterService {
             HashMap<String, Object> properties = (HashMap<String, Object>) schema.get("properties");
             for (String filter : filters.keySet()) {
                 HashMap<String, Object> originalProperty = (HashMap<String, Object>) properties.get(filter);
-                Long convertedValue = converter.convert(documentJson.get(filter), originalProperty.get("type").toString(), filters.get(filter).toString());
-                this.schemaPropertiesBSTs.get(schemaName).get(filter).remove(new DocumentNode(convertedValue, (Long) documentJson.get("id")));
+                Long convertedValue = converter.convert(documentJson.get(filter), originalProperty.get("type").toString(),  ((HashMap<String, Object>) filters.get(filter)).get("converter").toString());
+                this.schemaPropertiesBSTs.get(schemaName).get(filter).remove(new DocumentNode(convertedValue, ((Integer) documentJson.get("id")).longValue()));
             }
         }
     }

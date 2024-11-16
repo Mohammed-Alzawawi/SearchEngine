@@ -2,6 +2,7 @@ package com.example.SearchEngine.document.service;
 
 import com.example.SearchEngine.document.service.Validation.DocumentValidator;
 import com.example.SearchEngine.invertedIndex.InvertedIndex;
+import com.example.SearchEngine.invertedIndex.utility.CollectionInfo;
 import com.example.SearchEngine.schema.log.Command;
 import com.example.SearchEngine.schema.log.TrieLogService;
 import com.example.SearchEngine.utils.documentFilter.DocumentFilterService;
@@ -50,6 +51,9 @@ public class DocumentStorageService {
             } catch (JsonProcessingException e) {
                 throw new IllegalArgumentException("Error writing json file");
             }
+            if (CollectionInfo.isDocumentExist(schemaName , (Integer)document.get("id"))) {
+                throw new IllegalStateException("this document already exists");
+            }
             FileUtil.createFile(path, content);
             trieInvertedIndex.addDocument(schemaName, document);
             documentFilterService.addDocument(schemaName, (HashMap<String, Object>) document);
@@ -60,14 +64,19 @@ public class DocumentStorageService {
     }
 
     public void deleteDocument(String schemaName, Integer documentId) throws Exception {
+        if (!CollectionInfo.isDocumentExist(schemaName , documentId) ) {
+            throw new IllegalStateException("this document not exists");
+        }
+
         Map<String, Object> document = getDocument(schemaName, documentId);
-        JsonNode jsonNode = mapper.convertValue(document, JsonNode.class);
-        String path = schemaPathService.getSchemaPath(schemaName);
-        path += "documents/" + jsonNode.get("id").toString();
-        FileUtil.deleteFile(path);
-        trieInvertedIndex.deleteDocument(schemaName, documentId);
+        trieInvertedIndex.deleteDocument(schemaName,document);
         documentFilterService.removeDocument(schemaName, (HashMap<String, Object>) document);
-        trieLogService.write(Command.DELETE, jsonNode.get("id").toString(), schemaName);
+        trieLogService.write(Command.DELETE,documentId.toString(), schemaName);
+    }
+
+    public  void updateDocument(String schemaName, Integer documentId, Map<String, Object> newDocument) throws Exception {
+        deleteDocument(schemaName, documentId);
+        addDocument(schemaName, newDocument);
     }
 
     public Map<String, Object> getDocument(String schemaName, Integer documentId) throws Exception {
