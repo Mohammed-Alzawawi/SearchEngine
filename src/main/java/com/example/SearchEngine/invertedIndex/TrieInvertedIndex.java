@@ -1,19 +1,15 @@
 package com.example.SearchEngine.invertedIndex;
 
 import com.example.SearchEngine.Analyzers.Analyzer;
-import com.example.SearchEngine.invertedIndex.service.fuzzySearch.FuzzyTrie;
 import com.example.SearchEngine.Tokenization.Token;
+import com.example.SearchEngine.invertedIndex.service.fuzzySearch.FuzzyTrie;
 import com.example.SearchEngine.invertedIndex.utility.CollectionInfo;
 import com.example.SearchEngine.invertedIndex.utility.SchemaAnalyzer;
 import com.example.SearchEngine.schema.service.SchemaDefaultService;
 import com.example.SearchEngine.schema.util.SchemaRoot;
-import com.example.SearchEngine.utils.documentFilter.DocumentFilterService;
-import com.example.SearchEngine.utils.storage.service.SchemaPathService;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -22,15 +18,9 @@ import java.util.Map;
 public class TrieInvertedIndex implements InvertedIndex {
 
     @Autowired
-    private SchemaDefaultService schemaDefaultService;
-    @Autowired
-    private SchemaPathService schemaPathService;
-    @Autowired
-    private ObjectMapper mapper;
-    @Autowired
     private FuzzyTrie fuzzyTrie;
     @Autowired
-    private DocumentFilterService documentFilterService;
+    private SchemaDefaultService schemaDefaultService;
 
 
     public boolean checkWordExist(TrieNode root, Token token) {
@@ -75,11 +65,11 @@ public class TrieInvertedIndex implements InvertedIndex {
     @Override
     public void addDocument(String schemaName, Map<String, Object> document) throws Exception {
         TrieNode root = SchemaRoot.getSchemaRoot(schemaName);
-        CollectionInfo.updateNumberOfDocument(schemaName, 1);
+        CollectionInfo.insertDocument(schemaName, (Integer) document.get("id"));
         for (String fieldName : document.keySet()) {
             List<Token> tokens = getTokens(schemaName, fieldName, document);
             if (!tokens.isEmpty()) {
-                fuzzyTrie.addField((String)document.get(fieldName) , schemaName );
+                fuzzyTrie.addField((String) document.get(fieldName), schemaName);
                 CollectionInfo.addField(schemaName, (Integer) document.get("id"), tokens);
             }
             indexer(root, (Integer) document.get("id"), fieldName, tokens);
@@ -87,19 +77,17 @@ public class TrieInvertedIndex implements InvertedIndex {
     }
 
     @Override
-    public void deleteDocument(String schemaName, Integer documentId) throws Exception {
-        String path = schemaPathService.getSchemaPath(schemaName) + "documents/" + documentId;
-        CollectionInfo.updateNumberOfDocument(schemaName, -1);
-        Map<String, Object> document = mapper.readValue(new File(path), Map.class);
+    public void deleteDocument(String schemaName, Map<String, Object> document) throws Exception {
+        CollectionInfo.removeDocument(schemaName, (Integer) document.get("id"));
         TrieNode root = SchemaRoot.getSchemaRoot(schemaName);
 
         for (String fieldName : document.keySet()) {
             List<Token> tokens = getTokens(schemaName, fieldName, document);
             if (!tokens.isEmpty()) {
-                fuzzyTrie.removeField((String)document.get(fieldName) , schemaName );
+                fuzzyTrie.removeField((String) document.get(fieldName), schemaName);
                 CollectionInfo.removeField(schemaName, (Integer) document.get("id"), tokens);
             }
-            remover(tokens, root, documentId);
+            remover(tokens, root, (Integer) document.get("id"));
         }
     }
 

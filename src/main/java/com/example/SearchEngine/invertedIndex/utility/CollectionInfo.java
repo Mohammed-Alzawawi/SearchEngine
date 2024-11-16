@@ -6,12 +6,14 @@ import com.example.SearchEngine.utils.storage.FileUtil;
 
 import java.io.*;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
 public class CollectionInfo {
     private static Map<String, Integer> numberOfDocument = new HashMap<>();
     private static Map<String, Double> documentsTotalLength = new HashMap<>();
+    private static Map<String, HashSet<Integer>> allDocuments = new HashMap<>();
     private static Map<String, Map<Integer, Double>> documentLength = new HashMap<>();
 
     public static Double getDocumentLength(String schemaName, Integer documentId) {
@@ -21,6 +23,24 @@ public class CollectionInfo {
 
     public static Double getDocumentsTotalLength(String schemaName) {
         return documentsTotalLength.getOrDefault(schemaName, 1.0);
+    }
+
+    public static void insertDocument(String schemaName, Integer documentId) {
+        allDocuments.putIfAbsent(schemaName, new HashSet<>());
+        allDocuments.get(schemaName).add(documentId);
+        updateNumberOfDocument(schemaName, 1);
+    }
+
+    public static boolean isDocumentExist(String schemaName, Integer documentId) {
+        allDocuments.putIfAbsent(schemaName, new HashSet<>());
+        return allDocuments.get(schemaName).contains(documentId);
+    }
+
+    public static void removeDocument(String schemaName, Integer documentId) {
+        if (allDocuments.get(schemaName).contains(documentId)) {
+            allDocuments.get(schemaName).remove(documentId);
+            updateNumberOfDocument(schemaName, -1);
+        }
     }
 
 
@@ -69,6 +89,7 @@ public class CollectionInfo {
         saveAttribute(numberOfDocument, Constants.Paths.SCHEMA_STORAGE_PATH + "numberOfDocument");
         saveAttribute(documentLength, Constants.Paths.SCHEMA_STORAGE_PATH + "documentLength");
         saveAttribute(documentsTotalLength, Constants.Paths.SCHEMA_STORAGE_PATH + "documentsTotalLength");
+        saveAttribute(allDocuments, Constants.Paths.SCHEMA_STORAGE_PATH + "allDocuments");
     }
 
     private static Object loadAttribute(String path) throws Exception {
@@ -84,5 +105,6 @@ public class CollectionInfo {
         numberOfDocument = (Map<String, Integer>) loadAttribute(Constants.Paths.SCHEMA_STORAGE_PATH + "numberOfDocument");
         documentsTotalLength = (Map<String, Double>) loadAttribute(Constants.Paths.SCHEMA_STORAGE_PATH + "documentsTotalLength");
         documentLength = (Map<String, Map<Integer, Double>>) loadAttribute(Constants.Paths.SCHEMA_STORAGE_PATH + "documentLength");
+        allDocuments = (Map<String, HashSet<Integer>>) loadAttribute(Constants.Paths.SCHEMA_STORAGE_PATH + "allDocuments");
     }
 }

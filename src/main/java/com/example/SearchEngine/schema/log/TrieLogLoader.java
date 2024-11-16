@@ -27,12 +27,12 @@ public class TrieLogLoader {
         String line;
         while((line = reader.readLine()) != null) {
             String[] words = line.split(" ");
+            Map<String, Object> document = documentStorageService.getDocument(schemaName, Integer.parseInt(words[2]));
             if (Command.valueOf(words[1]) == Command.INSERT){
-                Map<String, Object> document = documentStorageService.getDocument(schemaName, Integer.parseInt(words[2]));
                 trieInvertedIndex.addDocument(schemaName, document);
                 documentFilterService.addDocument(schemaName, (HashMap<String, Object>) document);
             } else if (Command.valueOf(words[1]) == Command.DELETE){
-                trieInvertedIndex.deleteDocument(schemaName, Integer.parseInt(words[2]));
+                trieInvertedIndex.deleteDocument(schemaName, document);
                 documentFilterService.removeDocument(schemaName, (HashMap<String, Object>) documentStorageService.getDocument(schemaName, Integer.parseInt(words[2])));
             } else if (Command.valueOf(words[1]) == Command.UPDATE){
                 // Update method from DocumentStorageService
