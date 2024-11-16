@@ -5,7 +5,7 @@ import java.util.List;
 
 public interface Ranker {
 
-    public HashMap<Integer, Double> calculateScore(String schemaName, HashMap<Integer, HashMap<String, Double>> documents);
+    public HashMap<Long, Double> calculateScore(String schemaName, HashMap<Long, HashMap<String, Double>> documents);
 
-    public List<Integer> rankDocuments(HashMap<Integer, Double> documentsScores);
+    public List<Long> rankDocuments(HashMap<Long, Double> documentsScores);
 }
