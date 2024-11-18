@@ -12,6 +12,7 @@ public class InstanceChecker {
         typeMap.put("Integer", Integer.class);
         typeMap.put("Double", Double.class);
         typeMap.put("String", String.class);
+        typeMap.put("Long", Long.class);
     }
 
     public static boolean isInstance(Object obj, String type) {

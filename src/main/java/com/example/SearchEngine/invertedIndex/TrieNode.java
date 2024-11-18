@@ -8,7 +8,7 @@ public class TrieNode implements Serializable {
     private static final long serialVersionUID = 5424601767160570951L;
     private HashMap<Character, TrieNode> nextNodes = new HashMap<>();
     private boolean endOfTerm = false;
-    private HashMap<Integer, HashMap<String, Double>> documents = new HashMap<>();
+    private HashMap<Long, HashMap<String, Double>> documents = new HashMap<>();
 
     public TrieNode() {
     }
@@ -45,7 +45,7 @@ public class TrieNode implements Serializable {
         endOfTerm = false;
     }
 
-    public void updateFieldWeight(String fieldName, Double weight, Integer documentId) {
+    public void updateFieldWeight(String fieldName, Double weight, Long documentId) {
         if (!documents.containsKey(documentId)) {
             documents.put(documentId, new HashMap<>());
         }
@@ -59,7 +59,7 @@ public class TrieNode implements Serializable {
         documents.get(documentId).put("total", documents.get(documentId).get("total") + weight);
     }
 
-    public void deleteDocument(Integer documentId) {
+    public void deleteDocument(Long documentId) {
         if (documents.containsKey(documentId)) {
             documents.remove(documentId);
         }
@@ -68,7 +68,7 @@ public class TrieNode implements Serializable {
         }
     }
 
-    public HashMap<Integer, HashMap<String, Double>> getDocuments() {
+    public HashMap<Long, HashMap<String, Double>> getDocuments() {
         return documents;
     }
 
