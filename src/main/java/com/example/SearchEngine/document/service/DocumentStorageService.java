@@ -40,7 +40,7 @@ public class DocumentStorageService {
             String path = schemaPathService.getSchemaPath(schemaName);
 
             long threadId = Thread.currentThread().getId();
-            String id = snowflake.generate(threadId);
+            Long id = snowflake.generate(threadId);
             document.put("id", id);
             JsonNode jsonNode = mapper.convertValue(document, JsonNode.class);
             path += "documents/" + jsonNode.get("id").toString();
