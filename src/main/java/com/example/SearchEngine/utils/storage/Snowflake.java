@@ -2,35 +2,37 @@ package com.example.SearchEngine.utils.storage;
 
 import org.springframework.stereotype.Service;
 import java.time.Instant;
-
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 public class Snowflake {
-    private static Long step = 0L;
+    private static final Map<Long, SnowflakeNode> threadLastData = new ConcurrentHashMap<>();
     private static final Long defultTimestamp = 1704432000000L;
-    private static Long lastTimestamp = null;
-    private static final Long maxStep = 5L;
+    private static final Long maxStep = 12L;
 
-    public synchronized Long generate(Long threadId){
+    public Long generate(Long threadId){
         Long currentTimestamp = getCurrentTimestamp();
-        if (currentTimestamp.equals(lastTimestamp)){
-            step++;
-            if (step > (1L << maxStep)){
-                step = 0L;
+        if (!threadLastData.containsKey(threadId)) {
+            threadLastData.put(threadId, new SnowflakeNode(0L, 0L));
+        }
+        if (currentTimestamp.equals(threadLastData.get(threadId).getTimestamp())){
+            threadLastData.get(threadId).setStep(threadLastData.get(threadId).getStep() + 1);
+            if (threadLastData.get(threadId).getStep() > ((1L << (maxStep + 1)) - 1)){
+                threadLastData.get(threadId).setStep(0L);
                 try{
                     Thread.sleep(1);
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }
-                lastTimestamp = currentTimestamp;
                 currentTimestamp = getCurrentTimestamp();
             }
         } else {
-            step = 0L;
+            threadLastData.get(threadId).setStep(0L);
         }
 
-        lastTimestamp = currentTimestamp;
-        return Long.parseLong(currentTimestamp.toString() + threadId + step.toString());
+        threadLastData.get(threadId).setTimestamp(currentTimestamp);
+        return (currentTimestamp << 22) | (threadId << 12) | threadLastData.get(threadId).getStep();
     }
 
     private Long getCurrentTimestamp(){
