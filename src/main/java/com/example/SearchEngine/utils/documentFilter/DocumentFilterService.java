@@ -1,7 +1,10 @@
 package com.example.SearchEngine.utils.documentFilter;
 
 import com.example.SearchEngine.schema.service.SchemaServiceInterface;
+import com.example.SearchEngine.schema.util.SchemaRoot;
 import com.example.SearchEngine.utils.documentFilter.converter.Converter;
+import com.example.SearchEngine.utils.documentFilter.matchFilter.KeywordsNode;
+import com.example.SearchEngine.utils.documentFilter.matchFilter.KeywordsTrie;
 import com.example.SearchEngine.utils.storage.FileUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -9,7 +12,7 @@ import org.springframework.stereotype.Service;
 import java.io.*;
 import java.util.*;
 
-import static com.example.SearchEngine.Constants.Constants.Paths.SCHEMA_PROPERTIES_BSTs_PATH;
+import static com.example.SearchEngine.Constants.Constants.Paths.*;
 
 @Service
 public class DocumentFilterService {
@@ -18,6 +21,8 @@ public class DocumentFilterService {
     private SchemaServiceInterface schemaService;
     @Autowired
     private Converter converter;
+    @Autowired
+    private KeywordsTrie keywordsTrie;
     private HashMap<String, List<Integer>> allCurrentDocuments = new HashMap<>();
     private HashMap<String, HashMap<String, NavigableSet<DocumentNode>>> schemaPropertiesBSTs = new HashMap<>();
     public void addNewSchema(HashMap<String, Object> schema) {
@@ -61,7 +66,7 @@ public class DocumentFilterService {
         }
     }
     private List<Integer> rangeFiltering(String schemaName, HashMap<String, HashMap<String, Object>> ranges) throws Exception {
-        List<Integer> filteredDocuments = allCurrentDocuments.get(schemaName);
+        List<Integer> filteredDocuments = allCurrentDocuments.getOrDefault(schemaName, new ArrayList<>());
         for (String property : ranges.keySet()) {
             NavigableSet<DocumentNode> propertyBST = schemaPropertiesBSTs.get(schemaName).get(property);
             Object minObject = ranges.get(property).get("min");
@@ -101,6 +106,24 @@ public class DocumentFilterService {
         return filteredDocuments;
     }
 
+    private List<Integer> matchFiltering(String schemaName, HashMap<String, String> keywords) {
+        List<Integer> filteredDocuments = allCurrentDocuments.getOrDefault(schemaName, new ArrayList<>());
+        KeywordsNode root = SchemaRoot.getKeywordsSchemaRoot(schemaName);
+        for (String fieldName : keywords.keySet()) {
+            String word = keywords.get(fieldName);
+            if (!keywordsTrie.checkWordExistence(root, word)) {
+                filteredDocuments = new ArrayList<>();
+                return filteredDocuments;
+            }
+            List<Integer> documentsInMatch = new ArrayList<>(keywordsTrie.getWordsLastNode(root, word)
+                                                            .getDocuments()
+                                                            .getOrDefault(fieldName, new HashSet<>()));
+            Collections.sort(documentsInMatch);
+            filteredDocuments = mergeTwoLists(documentsInMatch, filteredDocuments);
+        }
+        return filteredDocuments;
+    }
+
     public void savePropertiesBSTs() throws Exception {
         String path = SCHEMA_PROPERTIES_BSTs_PATH + "BSTsHashMap";
         if (FileUtil.checkExistence(path)) {
@@ -124,9 +147,33 @@ public class DocumentFilterService {
     }
 
     public List<Integer> getDocuments(String schemaName, HashMap<String, Object> filters) throws Exception {
+        HashMap<String, String> matches = (HashMap<String, String>) filters.get("match");
         HashMap<String, HashMap<String, Object>> ranges = (HashMap<String, HashMap<String, Object>>) filters.get("range");
         List<Integer> filteredDocuments = rangeFiltering(schemaName, ranges);
+        filteredDocuments = mergeTwoLists(filteredDocuments, matchFiltering(schemaName, matches));
         return filteredDocuments;
+    }
+
+    public void saveAllCurrentDocuments() throws Exception {
+        String path = SCHEMA_ALL_CURRENT_DOCUMENTS_PATH + "AllCurrentDocuments";
+        if (FileUtil.checkExistence(path)) {
+            FileUtil.deleteFile(path);
+        }
+        File file = new File(path);
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(path))) {
+            oos.writeObject(allCurrentDocuments);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void loadAllCurrentDocuments() {
+        String path = SCHEMA_ALL_CURRENT_DOCUMENTS_PATH + "AllCurrentDocuments";
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(path))) {
+            allCurrentDocuments = (HashMap<String, List<Integer>>) ois.readObject();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public List<Integer> mergeTwoLists(List<Integer> firstRange, List<Integer> secondRange) {

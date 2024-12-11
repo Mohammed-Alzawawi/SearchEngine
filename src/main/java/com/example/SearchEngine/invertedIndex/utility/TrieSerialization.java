@@ -7,6 +7,7 @@ import com.example.SearchEngine.schema.log.TrieLogLoader;
 import com.example.SearchEngine.schema.log.TrieLogService;
 import com.example.SearchEngine.schema.util.SchemaRoot;
 import com.example.SearchEngine.utils.documentFilter.DocumentFilterService;
+import com.example.SearchEngine.utils.documentFilter.matchFilter.KeywordsNode;
 import com.example.SearchEngine.utils.storage.FileUtil;
 import com.example.SearchEngine.utils.storage.service.SchemaPathService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Service;
 import java.io.*;
 import java.util.List;
 
+import static com.example.SearchEngine.Constants.Constants.Paths.SCHEMA_KEYWORD_TRIES_PATH;
 import static com.example.SearchEngine.Constants.Constants.Paths.SCHEMA_PATH_DICTIONARY_PATH;
 
 
@@ -44,20 +46,34 @@ public class TrieSerialization {
             }
         }
 
-        for (String schemaName : SchemaRoot.roots.keySet()) {
+        for (String schemaName : SchemaRoot.keywordsRoots.keySet()) {
+            String path = SCHEMA_KEYWORD_TRIES_PATH + schemaName + "KeywordsTrie";
+            if (FileUtil.checkExistence(path)) {
+                FileUtil.deleteFile(path);
+            }
+            File file = new File(path);
+            try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(path))) {
+                oos.writeObject(SchemaRoot.getKeywordsSchemaRoot(schemaName));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        for (String schemaName : SchemaRoot.invertedIndexRoots.keySet()) {
             String path = schemaPathService.getSchemaPath(schemaName) + "trie";
             if (FileUtil.checkExistence(path)) {
                 FileUtil.deleteFile(path);
             }
             File file = new File(path);
             try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(path))) {
-                oos.writeObject(SchemaRoot.roots.get(schemaName));
+                oos.writeObject(SchemaRoot.invertedIndexRoots.get(schemaName));
             } catch (IOException e) {
                 e.printStackTrace();
             }
             trieLogService.refresh(schemaName);
         }
         documentFilterService.savePropertiesBSTs();
+        documentFilterService.saveAllCurrentDocuments();
     }
 
     public void loadTrie() throws Exception {
@@ -71,14 +87,19 @@ public class TrieSerialization {
                 e.printStackTrace();
             }
             try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(path + "trie"))) {
-                SchemaRoot.roots.put(schemaName, (TrieNode) ois.readObject());
+                SchemaRoot.invertedIndexRoots.put(schemaName, (TrieNode) ois.readObject());
             } catch (Exception e) {
                 e.printStackTrace();
             }
-
+            try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(SCHEMA_KEYWORD_TRIES_PATH + schemaName + "KeywordsTrie"))) {
+                SchemaRoot.keywordsRoots.put(schemaName, (KeywordsNode) ois.readObject());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             trieLogLoader.load(schemaName);
         }
         documentFilterService.loadPropertiesBSTs();
+        documentFilterService.loadAllCurrentDocuments();
     }
 
 }
