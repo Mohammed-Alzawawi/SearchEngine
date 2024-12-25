@@ -63,12 +63,9 @@ public class QueryValidator implements QueryValidationInterface {
         Map<String, Object> schemaProperties = (Map<String, Object>) schema.get("properties");
 
         for (String key : matchFilters.keySet()) {
-            if (!schemaFilters.containsKey(key)) {
-                return false;
-            }
             FieldValidation fieldValidation = typeChecker.check((String) ((Map<String, Object>) schemaProperties.get(key)).get("type")) ;
             if (!fieldValidation.validate(matchFilters.get(key))) {
-                return  false ;
+                return false ;
             }
 
         }

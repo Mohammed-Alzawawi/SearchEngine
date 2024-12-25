@@ -1,7 +1,11 @@
 package com.example.SearchEngine.utils.documentFilter;
 
+import com.example.SearchEngine.invertedIndex.utility.CollectionInfo;
 import com.example.SearchEngine.schema.service.SchemaServiceInterface;
+import com.example.SearchEngine.schema.util.SchemaRoot;
 import com.example.SearchEngine.utils.documentFilter.converter.Converter;
+import com.example.SearchEngine.utils.documentFilter.matchFilter.KeywordsNode;
+import com.example.SearchEngine.utils.documentFilter.matchFilter.KeywordsTrie;
 import com.example.SearchEngine.utils.storage.FileUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -9,7 +13,7 @@ import org.springframework.stereotype.Service;
 import java.io.*;
 import java.util.*;
 
-import static com.example.SearchEngine.Constants.Constants.Paths.SCHEMA_PROPERTIES_BSTs_PATH;
+import static com.example.SearchEngine.Constants.Constants.Paths.*;
 
 @Service
 public class DocumentFilterService {
@@ -18,8 +22,10 @@ public class DocumentFilterService {
     private SchemaServiceInterface schemaService;
     @Autowired
     private Converter converter;
-    private HashMap<String, List<Integer>> allCurrentDocuments = new HashMap<>();
+    @Autowired
+    private KeywordsTrie keywordsTrie;
     private HashMap<String, HashMap<String, NavigableSet<DocumentNode>>> schemaPropertiesBSTs = new HashMap<>();
+
     public void addNewSchema(HashMap<String, Object> schema) {
         schemaPropertiesBSTs.putIfAbsent(schema.get("id").toString(), new HashMap<>());
         HashMap<String, Object> filters = (HashMap<String, Object>) schema.get("filters");
@@ -33,17 +39,14 @@ public class DocumentFilterService {
         if (!this.schemaPropertiesBSTs.containsKey(schemaName)) {
             addNewSchema(schemaService.getSchema(schemaName));
         }
-        if (!this.allCurrentDocuments.containsKey(schemaName)) {
-            allCurrentDocuments.put(schemaName, new ArrayList<>());
-        }
-        allCurrentDocuments.get(schemaName).add((Integer) documentJson.get("id"));
+        CollectionInfo.insertDocument(schemaName, (Long) documentJson.get("id"));
         if (schema.get("filters") instanceof HashMap<?,?>) {
             HashMap<String, Object> filters = (HashMap<String, Object>) schema.get("filters");
             HashMap<String, Object> properties = (HashMap<String, Object>) schema.get("properties");
             for (String filter : filters.keySet()) {
                 HashMap<String, Object> originalProperty = (HashMap<String, Object>) properties.get(filter);
                 Long convertedValue = converter.convert(documentJson.get(filter), originalProperty.get("type").toString(), ((HashMap<String, Object>) filters.get(filter)).get("converter").toString());
-                this.schemaPropertiesBSTs.get(schemaName).get(filter).add(new DocumentNode(convertedValue, ((Integer) documentJson.get("id")).longValue()));
+                this.schemaPropertiesBSTs.get(schemaName).get(filter).add(new DocumentNode(convertedValue, ((Long) documentJson.get("id"))));
             }
         }
     }
@@ -55,13 +58,13 @@ public class DocumentFilterService {
             HashMap<String, Object> properties = (HashMap<String, Object>) schema.get("properties");
             for (String filter : filters.keySet()) {
                 HashMap<String, Object> originalProperty = (HashMap<String, Object>) properties.get(filter);
-                Long convertedValue = converter.convert(documentJson.get(filter), originalProperty.get("type").toString(), filters.get(filter).toString());
-                this.schemaPropertiesBSTs.get(schemaName).get(filter).remove(new DocumentNode(convertedValue, (Long) documentJson.get("id")));
+                Long convertedValue = converter.convert(documentJson.get(filter), originalProperty.get("type").toString(),  ((HashMap<String, Object>) filters.get(filter)).get("converter").toString());
+                this.schemaPropertiesBSTs.get(schemaName).get(filter).remove(new DocumentNode(convertedValue, ((Long) documentJson.get("id"))));
             }
         }
     }
-    private List<Integer> rangeFiltering(String schemaName, HashMap<String, HashMap<String, Object>> ranges) throws Exception {
-        List<Integer> filteredDocuments = allCurrentDocuments.get(schemaName);
+    private List<Long> rangeFiltering(String schemaName, HashMap<String, HashMap<String, Object>> ranges) throws Exception {
+        List<Long> filteredDocuments = CollectionInfo.getAllSchemaDocuments(schemaName);
         for (String property : ranges.keySet()) {
             NavigableSet<DocumentNode> propertyBST = schemaPropertiesBSTs.get(schemaName).get(property);
             Object minObject = ranges.get(property).get("min");
@@ -74,9 +77,6 @@ public class DocumentFilterService {
                     minObject = Long.MIN_VALUE;
                 }
             }
-            else {
-                minObject = ((Integer) minObject).longValue();
-            }
             if (maxObject instanceof String) {
                 if (maxObject.equals("inf")) {
                     maxObject =  Long.MAX_VALUE;
@@ -85,18 +85,33 @@ public class DocumentFilterService {
                     maxObject = Long.MIN_VALUE;
                 }
             }
-            else {
-                maxObject = ((Integer) maxObject).longValue();
-            }
             Long min = (Long) minObject;
             Long max = (Long) maxObject;
             SortedSet<DocumentNode> RangeSubSet = propertyBST.subSet(new DocumentNode(min, Long.MIN_VALUE), true, new DocumentNode(max, Long.MAX_VALUE), true);
-            List<Integer> documentsInRange = new ArrayList<>();
+            List<Long> documentsInRange = new ArrayList<>();
             for (DocumentNode documentNode : RangeSubSet) {
-                documentsInRange.add((documentNode.getSecond().intValue()));
+                documentsInRange.add((documentNode.getSecond()));
             }
             Collections.sort(documentsInRange);
             filteredDocuments = mergeTwoLists(filteredDocuments, documentsInRange);
+        }
+        return filteredDocuments;
+    }
+
+    private List<Long> matchFiltering(String schemaName, HashMap<String, String> keywords) {
+        List<Long> filteredDocuments = CollectionInfo.getAllSchemaDocuments(schemaName);
+        KeywordsNode root = SchemaRoot.getKeywordsSchemaRoot(schemaName);
+        for (String fieldName : keywords.keySet()) {
+            String word = keywords.get(fieldName);
+            if (!keywordsTrie.checkWordExistence(root, word)) {
+                filteredDocuments = new ArrayList<>();
+                return filteredDocuments;
+            }
+            List<Long> documentsInMatch = new ArrayList<>(keywordsTrie.getWordsLastNode(root, word)
+                                                            .getDocuments()
+                                                            .getOrDefault(fieldName, new HashSet<>()));
+            Collections.sort(documentsInMatch);
+            filteredDocuments = mergeTwoLists(documentsInMatch, filteredDocuments);
         }
         return filteredDocuments;
     }
@@ -122,23 +137,25 @@ public class DocumentFilterService {
             e.printStackTrace();
         }
     }
-
-    public List<Integer> getDocuments(String schemaName, HashMap<String, Object> filters) throws Exception {
-        HashMap<String, HashMap<String, Object>> ranges = (HashMap<String, HashMap<String, Object>>) filters.get("range");
-        List<Integer> filteredDocuments = rangeFiltering(schemaName, ranges);
+    public List<Long> getDocuments(String schemaName, HashMap<String, Object> filters) throws Exception {
+        HashMap<String, HashMap<String, Object>> ranges = (HashMap<String, HashMap<String, Object>>) filters.getOrDefault("range", new HashMap<>());
+        HashMap<String, String> matches = (HashMap<String, String>) filters.getOrDefault("match", new HashMap<>());
+        List<Long> filteredDocuments = CollectionInfo.getAllSchemaDocuments(schemaName);
+        filteredDocuments = mergeTwoLists(rangeFiltering(schemaName, ranges), filteredDocuments);
+        filteredDocuments = mergeTwoLists(matchFiltering(schemaName, matches), filteredDocuments);
         return filteredDocuments;
     }
 
-    public List<Integer> mergeTwoLists(List<Integer> firstRange, List<Integer> secondRange) {
+    public List<Long> mergeTwoLists(List<Long> firstRange, List<Long> secondRange) {
         if (firstRange.isEmpty()) {
             return firstRange;
         }
         else if (secondRange.isEmpty()) {
             return secondRange;
         }
-        List<Integer> result = new ArrayList<>();
+        List<Long> result = new ArrayList<>();
         int pointer1 = 0, pointer2 = 0;
-        Integer max = Integer.max(firstRange.get(pointer1), secondRange.get(pointer2));
+        Long max = Math.max(firstRange.get(pointer1), secondRange.get(pointer2));
         pointer1 = lowerBound(firstRange, max);
         pointer2 = lowerBound(secondRange, max);
         while (pointer1 < firstRange.size() && pointer2 < secondRange.size()) {
@@ -150,14 +167,14 @@ public class DocumentFilterService {
             if (pointer1 >= firstRange.size() || pointer2 >= secondRange.size()) {
                 break;
             }
-            max = Integer.max(firstRange.get(pointer1), secondRange.get(pointer2));
+            max = Math.max(firstRange.get(pointer1), secondRange.get(pointer2));
             pointer1 = lowerBound(firstRange, max);
             pointer2 = lowerBound(secondRange, max);
         }
         return result;
-    };
+    }
 
-    private int lowerBound(List<Integer> targetList, int targetElement) {
+    private int lowerBound(List<Long> targetList, long targetElement) {
         int result = Collections.binarySearch(targetList, targetElement);
         if (result < 0) {
             result = -result - 1;

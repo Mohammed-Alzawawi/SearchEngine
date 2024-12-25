@@ -1,18 +1,25 @@
 package com.example.SearchEngine.schema.util;
 
 import com.example.SearchEngine.invertedIndex.TrieNode;
-import org.springframework.stereotype.Service;
+import com.example.SearchEngine.utils.documentFilter.matchFilter.KeywordsNode;
 
 import java.util.HashMap;
 
 public class SchemaRoot {
-    public static HashMap<String, TrieNode> roots = new HashMap<>();
+    public static HashMap<String, TrieNode> invertedIndexRoots = new HashMap<>();
+    public static HashMap<String, KeywordsNode> keywordsRoots = new HashMap<>();
 
-    public static TrieNode getSchemaRoot(String schemaName) {
-        if (!roots.containsKey(schemaName)) {
-            roots.put(schemaName, new TrieNode());
+    public static TrieNode getInvertedIndexSchemaRoot(String schemaName) {
+        if (!invertedIndexRoots.containsKey(schemaName)) {
+            invertedIndexRoots.put(schemaName, new TrieNode());
         }
-        return roots.get(schemaName);
+        return invertedIndexRoots.get(schemaName);
     }
 
+    public static KeywordsNode getKeywordsSchemaRoot(String schemaName) {
+        if (!keywordsRoots.containsKey(schemaName)) {
+            keywordsRoots.put(schemaName, new KeywordsNode());
+        }
+        return keywordsRoots.get(schemaName);
+    }
 }

@@ -2,10 +2,13 @@ package com.example.SearchEngine.document.service;
 
 import com.example.SearchEngine.document.service.Validation.DocumentValidator;
 import com.example.SearchEngine.invertedIndex.InvertedIndex;
+import com.example.SearchEngine.invertedIndex.utility.CollectionInfo;
 import com.example.SearchEngine.schema.log.Command;
 import com.example.SearchEngine.schema.log.TrieLogService;
 import com.example.SearchEngine.utils.documentFilter.DocumentFilterService;
+import com.example.SearchEngine.utils.documentFilter.matchFilter.KeywordsTrie;
 import com.example.SearchEngine.utils.storage.FileUtil;
+import com.example.SearchEngine.utils.storage.Snowflake;
 import com.example.SearchEngine.utils.storage.service.SchemaPathService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -31,6 +34,10 @@ public class DocumentStorageService {
     private TrieLogService trieLogService;
     @Autowired
     private DocumentFilterService documentFilterService;
+    @Autowired
+    private KeywordsTrie keywordsTrie;
+    @Autowired
+    private Snowflake snowflake;
 
     private void checkID(JsonNode jsonNode) {
         if (!jsonNode.has("id") || (!jsonNode.get("id").isInt() && !jsonNode.get("id").isLong())) {
@@ -38,13 +45,14 @@ public class DocumentStorageService {
         }
     }
 
-
     public void addDocument(String schemaName, Map<String, Object> document) throws Exception {
         if (documentValidator.validate(schemaName, document)) {
             String path = schemaPathService.getSchemaPath(schemaName);
 
+            long threadId = Thread.currentThread().getId();
+            Long id = snowflake.generate(threadId);
+            document.put("id", id);
             JsonNode jsonNode = mapper.convertValue(document, JsonNode.class);
-            checkID(jsonNode);
             path += "documents/" + jsonNode.get("id").toString();
             String content;
             try {
@@ -52,28 +60,37 @@ public class DocumentStorageService {
             } catch (JsonProcessingException e) {
                 throw new IllegalArgumentException("Error writing json file");
             }
+            if (CollectionInfo.isDocumentExist(schemaName , (Long)document.get("id"))) {
+                throw new IllegalStateException("this document already exists");
+            }
             FileUtil.createFile(path, content);
             trieInvertedIndex.addDocument(schemaName, document);
             documentFilterService.addDocument(schemaName, (HashMap<String, Object>) document);
+            keywordsTrie.addDocument(schemaName, (HashMap<String, Object>) document);
             trieLogService.write(Command.INSERT, jsonNode.get("id").toString(), schemaName);
         } else {
             throw new IllegalStateException("document not valid to schema");
         }
     }
 
-    public void deleteDocument(String schemaName, Integer documentId) throws Exception {
+    public void deleteDocument(String schemaName, Long documentId) throws Exception {
+        if (!CollectionInfo.isDocumentExist(schemaName , documentId) ) {
+            throw new IllegalStateException("this document not exists");
+        }
+
         Map<String, Object> document = getDocument(schemaName, documentId);
-        JsonNode jsonNode = mapper.convertValue(document, JsonNode.class);
-        checkID(jsonNode);
-        String path = schemaPathService.getSchemaPath(schemaName);
-        path += "documents/" + jsonNode.get("id").toString();
-        FileUtil.deleteFile(path);
-        trieInvertedIndex.deleteDocument(schemaName, documentId);
+        trieInvertedIndex.deleteDocument(schemaName,document);
         documentFilterService.removeDocument(schemaName, (HashMap<String, Object>) document);
-        trieLogService.write(Command.DELETE, jsonNode.get("id").toString(), schemaName);
+        keywordsTrie.deleteDocument(schemaName, (HashMap<String, Object>) document);
+        trieLogService.write(Command.DELETE,documentId.toString(), schemaName);
     }
 
-    public Map<String, Object> getDocument(String schemaName, Integer documentId) throws Exception {
+    public  void updateDocument(String schemaName, Long documentId, Map<String, Object> newDocument) throws Exception {
+        deleteDocument(schemaName, documentId);
+        addDocument(schemaName, newDocument);
+    }
+
+    public Map<String, Object> getDocument(String schemaName, Long documentId) throws Exception {
         String path = schemaPathService.getSchemaPath(schemaName);
         path += "documents/" + documentId.toString();
         String content = FileUtil.readFileContents(path);

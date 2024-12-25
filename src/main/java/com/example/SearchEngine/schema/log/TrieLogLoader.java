@@ -4,6 +4,7 @@ import com.example.SearchEngine.Constants.Constants;
 import com.example.SearchEngine.document.service.DocumentStorageService;
 import com.example.SearchEngine.invertedIndex.InvertedIndex;
 import com.example.SearchEngine.utils.documentFilter.DocumentFilterService;
+import com.example.SearchEngine.utils.documentFilter.matchFilter.KeywordsTrie;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,6 +21,8 @@ public class TrieLogLoader {
     DocumentFilterService documentFilterService;
     @Autowired
     private InvertedIndex trieInvertedIndex;
+    @Autowired
+    private KeywordsTrie keywordsTrie;
 
     public void load(String schemaName) throws Exception {
         String currentLogPath = Constants.Paths.SCHEMA_STORAGE_PATH + schemaName + "/currentLog.txt";
@@ -27,13 +30,15 @@ public class TrieLogLoader {
         String line;
         while((line = reader.readLine()) != null) {
             String[] words = line.split(" ");
+            Map<String, Object> document = documentStorageService.getDocument(schemaName, Long.parseLong(words[2]));
             if (Command.valueOf(words[1]) == Command.INSERT){
-                Map<String, Object> document = documentStorageService.getDocument(schemaName, Integer.parseInt(words[2]));
                 trieInvertedIndex.addDocument(schemaName, document);
                 documentFilterService.addDocument(schemaName, (HashMap<String, Object>) document);
+                keywordsTrie.addDocument(schemaName, (HashMap<String, Object>) document);
             } else if (Command.valueOf(words[1]) == Command.DELETE){
-                trieInvertedIndex.deleteDocument(schemaName, Integer.parseInt(words[2]));
-                documentFilterService.removeDocument(schemaName, (HashMap<String, Object>) documentStorageService.getDocument(schemaName, Integer.parseInt(words[2])));
+                trieInvertedIndex.deleteDocument(schemaName, document);
+                documentFilterService.removeDocument(schemaName, (HashMap<String, Object>) documentStorageService.getDocument(schemaName, Long.parseLong(words[2])));
+                keywordsTrie.deleteDocument(schemaName, (HashMap<String, Object>) documentStorageService.getDocument(schemaName, Long.parseLong(words[2])));
             } else if (Command.valueOf(words[1]) == Command.UPDATE){
                 // Update method from DocumentStorageService
             }
