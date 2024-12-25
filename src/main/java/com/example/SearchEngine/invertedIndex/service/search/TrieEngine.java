@@ -78,7 +78,6 @@ public class TrieEngine implements InvertedIndexEngine {
         List<Object> relevantDocuments = new ArrayList<>();
         List<Long> filteredDocumentIDs = documentFilterService.getDocuments(schemaName, (HashMap<String, Object>) query.get("filters"));
         Collections.sort(documentsId);
-//        Collections.sort(filteredDocumentIDs);
         if (!documentsId.isEmpty()) {
             documentsId = documentFilterService.mergeTwoLists(documentsId, filteredDocumentIDs);
         }
