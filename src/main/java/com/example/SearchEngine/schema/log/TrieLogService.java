@@ -2,7 +2,9 @@ package com.example.SearchEngine.schema.log;
 
 import com.example.SearchEngine.Constants.Constants;
 import com.example.SearchEngine.utils.storage.FileUtil;
+import com.example.SearchEngine.utils.storage.service.SchemaPathService;
 import lombok.Synchronized;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
@@ -12,7 +14,11 @@ import java.util.*;
 
 @Service
 public class TrieLogService {
+
     private final Object lock = new Object();
+    @Autowired
+    private SchemaPathService schemaPathService;
+
     public void write(Command command, String documentId, String schemaName){
         if (command == null){
             throw new NullPointerException("command is null");
@@ -23,7 +29,7 @@ public class TrieLogService {
     }
 
     @Synchronized("lock")
-    public void refresh(String schemaName){
+    public void refresh(String schemaName)throws Exception {
         String folderPath = Constants.Paths.SCHEMA_STORAGE_PATH + schemaName;
         String currentLogPath = folderPath + "/currentLog.txt";
         String logPath = folderPath + "/log.txt";
@@ -33,6 +39,12 @@ public class TrieLogService {
 
             String line;
             while ((line = reader.readLine()) != null) {
+                String[] words = line.split(" ");
+                if (Command.valueOf(words[1]) == Command.DELETE) {
+                    String path = schemaPathService.getSchemaPath(schemaName);
+                    path += "documents/" + words[2];
+                    FileUtil.deleteFile(path);
+                }
                 writer.write(line);
                 writer.newLine();
             }

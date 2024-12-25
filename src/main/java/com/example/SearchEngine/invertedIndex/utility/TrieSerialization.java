@@ -73,7 +73,6 @@ public class TrieSerialization {
             trieLogService.refresh(schemaName);
         }
         documentFilterService.savePropertiesBSTs();
-        documentFilterService.saveAllCurrentDocuments();
     }
 
     public void loadTrie() throws Exception {
@@ -99,7 +98,6 @@ public class TrieSerialization {
             trieLogLoader.load(schemaName);
         }
         documentFilterService.loadPropertiesBSTs();
-        documentFilterService.loadAllCurrentDocuments();
     }
 
 }

@@ -9,7 +9,7 @@ public class KeywordsNode implements Serializable {
     private static final long serialVersionUID = 5424601767160570951L;
     private HashMap<Character, KeywordsNode> nextNodes = new HashMap<>();
     private boolean endOfTerm = false;
-    private HashMap<String, HashSet<Integer>> documents = new HashMap<>();
+    private HashMap<String, HashSet<Long>> documents = new HashMap<>();
 
     public KeywordsNode() {
     }
@@ -46,14 +46,14 @@ public class KeywordsNode implements Serializable {
         endOfTerm = false;
     }
 
-    public void addDocument(String fieldName, int documentID) {
+    public void addDocument(String fieldName, Long documentID) {
         if (!this.documents.containsKey(fieldName)) {
             this.documents.put(fieldName, new HashSet<>());
         }
         this.documents.get(fieldName).add(documentID);
     }
 
-    public void removeDocument(String fieldName, int documentID) {
+    public void removeDocument(String fieldName, Long documentID) {
         if (!this.documents.containsKey(fieldName)) {
             return;
         }
@@ -61,7 +61,7 @@ public class KeywordsNode implements Serializable {
             this.documents.get(fieldName).remove(documentID);
         }
     }
-    public HashMap<String, HashSet<Integer>> getDocuments() {
+    public HashMap<String, HashSet<Long>> getDocuments() {
         return documents;
     }
 }

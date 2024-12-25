@@ -45,12 +45,12 @@ public class KeywordsTrie {
             HashMap<String, Object> property = (HashMap<String, Object>) properties.get(fieldName);
             if (property.get("type").equals("keyword")) {
                 KeywordsNode targetNode = getWordsLastNode(root, document.get(fieldName).toString());
-                targetNode.addDocument(fieldName, (Integer) document.get("id"));
+                targetNode.addDocument(fieldName, (Long) document.get("id"));
             }
             else if (property.get("type").equals("array") && properties.get("items").equals("keyword")) {
                 for (String word : (List<String>) document.get(fieldName)) {
                     KeywordsNode targetNode = getWordsLastNode(root, word);
-                    targetNode.addDocument(fieldName, (Integer) document.get("id"));
+                    targetNode.addDocument(fieldName, (Long) document.get("id"));
                 }
             }
         }
@@ -70,7 +70,7 @@ public class KeywordsTrie {
                     continue;
                 }
                 KeywordsNode targetNode = getWordsLastNode(root, document.get(fieldName).toString());
-                targetNode.removeDocument(fieldName, (Integer) document.get("id"));
+                targetNode.removeDocument(fieldName, (Long) document.get("id"));
             }
             else if (property.get("type").equals("array") && properties.get("items").equals("keyword")) {
                 for (String word : (List<String>) document.get(fieldName)) {
@@ -78,7 +78,7 @@ public class KeywordsTrie {
                         continue;
                     }
                     KeywordsNode targetNode = getWordsLastNode(root, word);
-                    targetNode.removeDocument(fieldName, (Integer) document.get("id"));
+                    targetNode.removeDocument(fieldName, (Long) document.get("id"));
                 }
             }
         }

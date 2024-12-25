@@ -37,15 +37,15 @@ public class TrieEngine implements InvertedIndexEngine {
     @Autowired
     DocumentFilterService documentFilterService;
 
-    private List<Integer> gitRelevantDocuments(List<Token> tokens, TrieNode root, String schemaName) {
-        HashMap<Integer, Double> documentsScores = new HashMap<>();
+    private List<Long> gitRelevantDocuments(List<Token> tokens, TrieNode root, String schemaName) {
+        HashMap<Long, Double> documentsScores = new HashMap<>();
 
         for (Token token : tokens) {
             if (trieInvertedIndex.checkWordExist(root, token)) {
                 TrieNode node = trieInvertedIndex.getWordLastNode(root, token);
-                HashMap<Integer, HashMap<String, Double>> documents = node.getDocuments();
-                HashMap<Integer, Double> currentScores = bm25Ranker.calculateScore(schemaName, documents);
-                for (Integer documentId : currentScores.keySet()) {
+                HashMap<Long, HashMap<String, Double>> documents = node.getDocuments();
+                HashMap<Long, Double> currentScores = bm25Ranker.calculateScore(schemaName, documents);
+                for (Long documentId : currentScores.keySet()) {
                     documentsScores.put(documentId, documentsScores.getOrDefault(documentId, 0.0) + currentScores.get(documentId));
                 }
             }
@@ -74,14 +74,15 @@ public class TrieEngine implements InvertedIndexEngine {
             });
         });
         TrieNode root = SchemaRoot.getInvertedIndexSchemaRoot(schemaName);
-        List<Integer> documentsId = gitRelevantDocuments(tokens, root, schemaName);
+        List<Long> documentsId = gitRelevantDocuments(tokens, root, schemaName);
         List<Object> relevantDocuments = new ArrayList<>();
-        List<Integer> filteredDocumentIDs = documentFilterService.getDocuments(schemaName, (HashMap<String, Object>) query.get("filters"));
+        List<Long> filteredDocumentIDs = documentFilterService.getDocuments(schemaName, (HashMap<String, Object>) query.get("filters"));
         Collections.sort(documentsId);
+//        Collections.sort(filteredDocumentIDs);
         if (!documentsId.isEmpty()) {
             documentsId = documentFilterService.mergeTwoLists(documentsId, filteredDocumentIDs);
         }
-        for (int documentId : documentsId) {
+        for (Long documentId : documentsId) {
             relevantDocuments.add(documentStorageService.getDocument(schemaName, documentId));
         }
         return relevantDocuments;
