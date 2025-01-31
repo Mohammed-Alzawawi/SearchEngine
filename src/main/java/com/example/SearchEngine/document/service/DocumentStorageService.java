@@ -7,6 +7,7 @@ import com.example.SearchEngine.schema.log.Command;
 import com.example.SearchEngine.schema.log.TrieLogService;
 import com.example.SearchEngine.utils.documentFilter.DocumentFilterService;
 import com.example.SearchEngine.utils.documentFilter.matchFilter.KeywordsTrie;
+import com.example.SearchEngine.utils.documentFilter.rangeFilter.PropertiesBSTs;
 import com.example.SearchEngine.utils.storage.FileUtil;
 import com.example.SearchEngine.utils.storage.Snowflake;
 import com.example.SearchEngine.utils.storage.service.SchemaPathService;
@@ -34,6 +35,8 @@ public class DocumentStorageService {
     private TrieLogService trieLogService;
     @Autowired
     private DocumentFilterService documentFilterService;
+    @Autowired
+    private PropertiesBSTs propertiesBSTs;
     @Autowired
     private KeywordsTrie keywordsTrie;
     @Autowired
@@ -64,7 +67,7 @@ public class DocumentStorageService {
             }
             FileUtil.createFile(path, content);
             trieInvertedIndex.addDocument(schemaName, document);
-            documentFilterService.addDocument(schemaName, (HashMap<String, Object>) document);
+            propertiesBSTs.addDocument(schemaName, (HashMap<String, Object>) document);
             keywordsTrie.addDocument(schemaName, (HashMap<String, Object>) document);
             trieLogService.write(Command.INSERT, jsonNode.get("id").toString(), schemaName);
         } else {
@@ -79,7 +82,7 @@ public class DocumentStorageService {
 
         Map<String, Object> document = getDocument(schemaName, documentId);
         trieInvertedIndex.deleteDocument(schemaName,document);
-        documentFilterService.removeDocument(schemaName, (HashMap<String, Object>) document);
+        propertiesBSTs.removeDocument(schemaName, (HashMap<String, Object>) document);
         keywordsTrie.deleteDocument(schemaName, (HashMap<String, Object>) document);
         trieLogService.write(Command.DELETE,documentId.toString(), schemaName);
     }
