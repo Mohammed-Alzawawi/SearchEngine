@@ -44,7 +44,6 @@ public class DocumentStorageService {
             throw new IllegalStateException("ID not found");
         }
     }
-
     public void addDocument(String schemaName, Map<String, Object> document) throws Exception {
         if (documentValidator.validate(schemaName, document)) {
             String path = schemaPathService.getSchemaPath(schemaName);
