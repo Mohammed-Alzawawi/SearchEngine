@@ -73,7 +73,7 @@ public class TrieEngine implements InvertedIndexEngine {
                 tokens.add(token);
             });
         });
-        TrieNode root = SchemaRoot.getSchemaRoot(schemaName);
+        TrieNode root = SchemaRoot.getInvertedIndexSchemaRoot(schemaName);
         List<Long> documentsId = gitRelevantDocuments(tokens, root, schemaName);
         List<Object> relevantDocuments = new ArrayList<>();
         List<Long> filteredDocumentIDs = documentFilterService.getDocuments(schemaName, (HashMap<String, Object>) query.get("filters"));

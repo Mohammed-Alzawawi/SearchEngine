@@ -64,7 +64,7 @@ public class TrieInvertedIndex implements InvertedIndex {
 
     @Override
     public void addDocument(String schemaName, Map<String, Object> document) throws Exception {
-        TrieNode root = SchemaRoot.getSchemaRoot(schemaName);
+        TrieNode root = SchemaRoot.getInvertedIndexSchemaRoot(schemaName);
         CollectionInfo.insertDocument(schemaName, (Long) document.get("id"));
         for (String fieldName : document.keySet()) {
             List<Token> tokens = getTokens(schemaName, fieldName, document);
@@ -79,7 +79,7 @@ public class TrieInvertedIndex implements InvertedIndex {
     @Override
     public void deleteDocument(String schemaName, Map<String, Object> document) throws Exception {
         CollectionInfo.removeDocument(schemaName, (Long) document.get("id"));
-        TrieNode root = SchemaRoot.getSchemaRoot(schemaName);
+        TrieNode root = SchemaRoot.getInvertedIndexSchemaRoot(schemaName);
 
         for (String fieldName : document.keySet()) {
             List<Token> tokens = getTokens(schemaName, fieldName, document);

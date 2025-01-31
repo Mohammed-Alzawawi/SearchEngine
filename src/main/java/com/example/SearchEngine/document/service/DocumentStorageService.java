@@ -6,6 +6,7 @@ import com.example.SearchEngine.invertedIndex.utility.CollectionInfo;
 import com.example.SearchEngine.schema.log.Command;
 import com.example.SearchEngine.schema.log.TrieLogService;
 import com.example.SearchEngine.utils.documentFilter.DocumentFilterService;
+import com.example.SearchEngine.utils.documentFilter.matchFilter.KeywordsTrie;
 import com.example.SearchEngine.utils.storage.FileUtil;
 import com.example.SearchEngine.utils.storage.Snowflake;
 import com.example.SearchEngine.utils.storage.service.SchemaPathService;
@@ -34,8 +35,15 @@ public class DocumentStorageService {
     @Autowired
     private DocumentFilterService documentFilterService;
     @Autowired
+    private KeywordsTrie keywordsTrie;
+    @Autowired
     private Snowflake snowflake;
 
+    private void checkID(JsonNode jsonNode) {
+        if (!jsonNode.has("id") || (!jsonNode.get("id").isInt() && !jsonNode.get("id").isLong())) {
+            throw new IllegalStateException("ID not found");
+        }
+    }
     public void addDocument(String schemaName, Map<String, Object> document) throws Exception {
         if (documentValidator.validate(schemaName, document)) {
             String path = schemaPathService.getSchemaPath(schemaName);
@@ -57,6 +65,7 @@ public class DocumentStorageService {
             FileUtil.createFile(path, content);
             trieInvertedIndex.addDocument(schemaName, document);
             documentFilterService.addDocument(schemaName, (HashMap<String, Object>) document);
+            keywordsTrie.addDocument(schemaName, (HashMap<String, Object>) document);
             trieLogService.write(Command.INSERT, jsonNode.get("id").toString(), schemaName);
         } else {
             throw new IllegalStateException("document not valid to schema");
@@ -71,6 +80,7 @@ public class DocumentStorageService {
         Map<String, Object> document = getDocument(schemaName, documentId);
         trieInvertedIndex.deleteDocument(schemaName,document);
         documentFilterService.removeDocument(schemaName, (HashMap<String, Object>) document);
+        keywordsTrie.deleteDocument(schemaName, (HashMap<String, Object>) document);
         trieLogService.write(Command.DELETE,documentId.toString(), schemaName);
     }
 
