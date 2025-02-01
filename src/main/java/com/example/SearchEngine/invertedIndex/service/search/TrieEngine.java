@@ -13,6 +13,7 @@ import com.example.SearchEngine.schema.util.SchemaRoot;
 import com.example.SearchEngine.Tokenization.Token;
 import com.example.SearchEngine.utils.documentFilter.DocumentFilterService;
 
+import com.example.SearchEngine.utils.documentFilter.Merger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -36,6 +37,8 @@ public class TrieEngine implements InvertedIndexEngine {
     QueryValidator queryValidator;
     @Autowired
     DocumentFilterService documentFilterService;
+    @Autowired
+    Merger merger;
 
     private List<Long> gitRelevantDocuments(List<Token> tokens, TrieNode root, String schemaName) {
         HashMap<Long, Double> documentsScores = new HashMap<>();
@@ -78,8 +81,9 @@ public class TrieEngine implements InvertedIndexEngine {
         List<Object> relevantDocuments = new ArrayList<>();
         List<Long> filteredDocumentIDs = documentFilterService.getDocuments(schemaName, (HashMap<String, Object>) query.get("filters"));
         Collections.sort(documentsId);
+//        Collections.sort(filteredDocumentIDs);
         if (!documentsId.isEmpty()) {
-            documentsId = documentFilterService.mergeTwoLists(documentsId, filteredDocumentIDs);
+            documentsId = merger.mergeTwoLists(documentsId, filteredDocumentIDs);
         }
         for (Long documentId : documentsId) {
             relevantDocuments.add(documentStorageService.getDocument(schemaName, documentId));

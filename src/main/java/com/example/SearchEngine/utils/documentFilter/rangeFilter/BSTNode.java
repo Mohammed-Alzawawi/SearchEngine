@@ -1,16 +1,16 @@
-package com.example.SearchEngine.utils.documentFilter;
+package com.example.SearchEngine.utils.documentFilter.rangeFilter;
 
 import java.io.Serializable;
 
-public class DocumentNode implements Comparable<DocumentNode>, Serializable {
+public class BSTNode implements Comparable<BSTNode>, Serializable {
     private static final long serialVersionUID = 3959359313312146859L;
     private Long first;
     private Long second;
 
-    public DocumentNode() {
+    public BSTNode() {
     }
 
-    public DocumentNode(Long first, Long second) {
+    public BSTNode(Long first, Long second) {
         this.first = first;
         this.second = second;
     }
@@ -32,7 +32,7 @@ public class DocumentNode implements Comparable<DocumentNode>, Serializable {
     }
 
     @Override
-    public int compareTo(DocumentNode other) {
+    public int compareTo(BSTNode other) {
         if (Long.compare(this.getFirst(), other.getFirst()) != 0) {
             return Long.compare(this.getFirst(), other.getFirst());
         }

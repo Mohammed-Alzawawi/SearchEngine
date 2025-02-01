@@ -5,6 +5,7 @@ import com.example.SearchEngine.document.service.DocumentStorageService;
 import com.example.SearchEngine.invertedIndex.InvertedIndex;
 import com.example.SearchEngine.utils.documentFilter.DocumentFilterService;
 import com.example.SearchEngine.utils.documentFilter.matchFilter.KeywordsTrie;
+import com.example.SearchEngine.utils.documentFilter.rangeFilter.PropertiesBSTs;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -22,6 +23,8 @@ public class TrieLogLoader {
     @Autowired
     private InvertedIndex trieInvertedIndex;
     @Autowired
+    private PropertiesBSTs propertiesBSTs;
+    @Autowired
     private KeywordsTrie keywordsTrie;
 
     public void load(String schemaName) throws Exception {
@@ -33,11 +36,11 @@ public class TrieLogLoader {
             Map<String, Object> document = documentStorageService.getDocument(schemaName, Long.parseLong(words[2]));
             if (Command.valueOf(words[1]) == Command.INSERT){
                 trieInvertedIndex.addDocument(schemaName, document);
-                documentFilterService.addDocument(schemaName, (HashMap<String, Object>) document);
+                propertiesBSTs.addDocument(schemaName, (HashMap<String, Object>) document);
                 keywordsTrie.addDocument(schemaName, (HashMap<String, Object>) document);
             } else if (Command.valueOf(words[1]) == Command.DELETE){
                 trieInvertedIndex.deleteDocument(schemaName, document);
-                documentFilterService.removeDocument(schemaName, (HashMap<String, Object>) documentStorageService.getDocument(schemaName, Long.parseLong(words[2])));
+                propertiesBSTs.removeDocument(schemaName, (HashMap<String, Object>) documentStorageService.getDocument(schemaName, Long.parseLong(words[2])));
                 keywordsTrie.deleteDocument(schemaName, (HashMap<String, Object>) documentStorageService.getDocument(schemaName, Long.parseLong(words[2])));
             } else if (Command.valueOf(words[1]) == Command.UPDATE){
                 // Update method from DocumentStorageService
