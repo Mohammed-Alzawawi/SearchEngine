@@ -28,7 +28,7 @@ public class DocumentValidator {
         this.fields = new HashMap<>();
     }
 
-    private void fiilFields(Map<String, Object> schema) {
+    private void fillFields(Map<String, Object> schema) {
         schema = (Map<String, Object>) schema.get("properties");
         ConstrainChecker constrainChecker;
         for (String key : schema.keySet()) {
@@ -80,7 +80,7 @@ public class DocumentValidator {
         if (!fieldCheck(schema, json) || !mandatoryCheck(schema, json)) {
             return false;
         }
-        fiilFields(schema);
+        fillFields(schema);
         for (String key : json.keySet()) {
             if (key == "id") {
                 continue;
@@ -92,6 +92,20 @@ public class DocumentValidator {
             }
         }
         return true;
+    }
+
+    public boolean updateValidation(String schemaName, Map<String, Object> json) throws Exception {
+        Map<String, Object> schema;
+        schema = schemaDefaultService.getSchema(schemaName);
+        if (!fieldCheck(schema, json) || json.containsKey("id")) {
+            return false;
+        }
+        fillFields(schema);
+        return json.keySet().stream().allMatch(key ->
+                fields.get(key).stream().allMatch(validation ->
+                        validation.validate(json.get(key))
+                )
+        );
     }
 
 }
