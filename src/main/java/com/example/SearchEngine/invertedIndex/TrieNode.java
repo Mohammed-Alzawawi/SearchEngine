@@ -57,6 +57,12 @@ public class TrieNode implements Serializable {
         }
         documents.get(documentId).put(fieldName, documents.get(documentId).get(fieldName) + weight);
         documents.get(documentId).put("total", documents.get(documentId).get("total") + weight);
+        if (documents.get(documentId).get(fieldName)==0) {
+            documents.get(documentId).remove(fieldName);
+        }
+        if (documents.get(documentId).size()==1) {
+            documents.remove(documentId);
+        }
     }
 
     public void deleteDocument(Long documentId) {

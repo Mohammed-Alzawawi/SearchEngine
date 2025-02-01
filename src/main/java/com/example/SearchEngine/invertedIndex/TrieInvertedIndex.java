@@ -53,42 +53,51 @@ public class TrieInvertedIndex implements InvertedIndex {
         }
     }
 
-    public void remover(List<Token> tokens, TrieNode root, Long documentId) {
+    public void remover(TrieNode root, Long documentId, String fieldName, List<Token> tokens) {
         for (Token token : tokens) {
             if (checkWordExist(root, token)) {
                 TrieNode lastNode = getWordLastNode(root, token);
-                lastNode.deleteDocument(documentId);
+                lastNode.updateFieldWeight(fieldName, -token.getWeight(), documentId);
             }
         }
     }
 
     @Override
     public void addDocument(String schemaName, Map<String, Object> document) throws Exception {
-        TrieNode root = SchemaRoot.getInvertedIndexSchemaRoot(schemaName);
         CollectionInfo.insertDocument(schemaName, (Long) document.get("id"));
         for (String fieldName : document.keySet()) {
-            List<Token> tokens = getTokens(schemaName, fieldName, document);
-            if (!tokens.isEmpty()) {
-                fuzzyTrie.addField((String) document.get(fieldName), schemaName);
-                CollectionInfo.addField(schemaName, (Long) document.get("id"), tokens);
-            }
-            indexer(root, (Long) document.get("id"), fieldName, tokens);
+            addField(schemaName, document, fieldName);
         }
+    }
+
+    @Override
+    public void addField(String schemaName, Map<String, Object> document, String fieldName) throws Exception {
+        TrieNode root = SchemaRoot.getSchemaRoot(schemaName);
+        List<Token> tokens = getTokens(schemaName, fieldName, document);
+        if (!tokens.isEmpty()) {
+            fuzzyTrie.addField((String) document.get(fieldName), schemaName);
+            CollectionInfo.addField(schemaName, (Long) document.get("id"), tokens);
+        }
+        indexer(root, (Long) document.get("id"), fieldName, tokens);
     }
 
     @Override
     public void deleteDocument(String schemaName, Map<String, Object> document) throws Exception {
         CollectionInfo.removeDocument(schemaName, (Long) document.get("id"));
-        TrieNode root = SchemaRoot.getInvertedIndexSchemaRoot(schemaName);
-
         for (String fieldName : document.keySet()) {
-            List<Token> tokens = getTokens(schemaName, fieldName, document);
-            if (!tokens.isEmpty()) {
-                fuzzyTrie.removeField((String) document.get(fieldName), schemaName);
-                CollectionInfo.removeField(schemaName, (Long) document.get("id"), tokens);
-            }
-            remover(tokens, root, (Long) document.get("id"));
+            removeField(schemaName, document, fieldName);
         }
+    }
+
+    @Override
+    public void removeField(String schemaName, Map<String, Object> document, String fieldName) throws Exception {
+        TrieNode root = SchemaRoot.getSchemaRoot(schemaName);
+        List<Token> tokens = getTokens(schemaName, fieldName, document);
+        if (!tokens.isEmpty()) {
+            fuzzyTrie.removeField((String) document.get(fieldName), schemaName);
+            CollectionInfo.removeField(schemaName, (Long) document.get("id"), tokens);
+        }
+        remover(root, (Long) document.get("id") , fieldName , tokens);
     }
 
     private List<Token> getTokens(String schemaName, String fieldName, Map<String, Object> document) throws Exception {

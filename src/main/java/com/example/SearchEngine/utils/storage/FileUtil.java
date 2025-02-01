@@ -8,7 +8,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FileUtil {
+public class  FileUtil {
     public static void createFolder(String folderFullPath) {
         File folder = new File(folderFullPath);
         if (folder.exists()) {
