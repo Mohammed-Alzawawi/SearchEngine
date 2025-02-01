@@ -6,6 +6,7 @@ import com.example.SearchEngine.invertedIndex.utility.CollectionInfo;
 import com.example.SearchEngine.schema.log.Command;
 import com.example.SearchEngine.schema.log.TrieLogService;
 import com.example.SearchEngine.utils.documentFilter.DocumentFilterService;
+import com.example.SearchEngine.utils.documentFilter.matchFilter.KeywordsTrie;
 import com.example.SearchEngine.utils.storage.FileUtil;
 import com.example.SearchEngine.utils.storage.Snowflake;
 import com.example.SearchEngine.utils.storage.service.SchemaPathService;
@@ -37,6 +38,8 @@ public class DocumentStorageService {
     @Autowired
     private DocumentFilterService documentFilterService;
     @Autowired
+    private KeywordsTrie keywordsTrie;
+    @Autowired
     private Snowflake snowflake;
 
     private ReentrantReadWriteLock getLock(String schemaName, Long documentId) {
@@ -67,6 +70,7 @@ public class DocumentStorageService {
         FileUtil.createFile(path, content);
         trieInvertedIndex.addDocument(schemaName, document);
         documentFilterService.addDocument(schemaName, (HashMap<String, Object>) document);
+        keywordsTrie.addDocument(schemaName, (HashMap<String, Object>) document);
         trieLogService.write(Command.INSERT, jsonNode.get("id").toString(), schemaName);
     }
 
@@ -79,6 +83,8 @@ public class DocumentStorageService {
         trieInvertedIndex.deleteDocument(schemaName, document);
         documentFilterService.removeDocument(schemaName, (HashMap<String, Object>) document);
         trieLogService.write(Command.DELETE, documentId.toString(), schemaName);
+        keywordsTrie.deleteDocument(schemaName, (HashMap<String, Object>) document);
+        trieLogService.write(Command.DELETE,documentId.toString(), schemaName);
     }
 
 
@@ -113,7 +119,6 @@ public class DocumentStorageService {
             writeLock.unlock();
         }
     }
-
 
     public Map<String, Object> getDocument(String schemaName, Long documentId) throws Exception {
         ReentrantReadWriteLock.ReadLock readLock = getLock(schemaName, documentId).readLock();

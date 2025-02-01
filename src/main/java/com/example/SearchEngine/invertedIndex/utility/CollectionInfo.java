@@ -5,10 +5,7 @@ import com.example.SearchEngine.Tokenization.Token;
 import com.example.SearchEngine.utils.storage.FileUtil;
 
 import java.io.*;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class CollectionInfo {
     private static Map<String, Long> numberOfDocument = new HashMap<>();
@@ -34,6 +31,12 @@ public class CollectionInfo {
     public static boolean isDocumentExist(String schemaName, Long documentId) {
         allDocuments.putIfAbsent(schemaName, new HashSet<>());
         return allDocuments.get(schemaName).contains(documentId);
+    }
+
+    public static List<Long> getAllSchemaDocuments(String schemaName) {
+        List<Long> result = new ArrayList<>(allDocuments.getOrDefault(schemaName, new HashSet<>()));
+        Collections.sort(result);
+        return result;
     }
 
     public static void removeDocument(String schemaName, Long documentId) {

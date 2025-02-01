@@ -12,6 +12,8 @@ public final class Constants {
         public static final String SCHEMA_STORAGE_PATH = "C:/Search Engine/Directory/";
         public static final String SCHEMA_PATH_DICTIONARY_PATH = "C:/Search Engine/Externals/Path Directory/";
         public static final String SCHEMA_PROPERTIES_BSTs_PATH = "C:/Search Engine/Externals/PropertiesBSTs/";
+        public static final String SCHEMA_ALL_CURRENT_DOCUMENTS_PATH = "C:/Search Engine/Externals/AllCurrentDocuments/";
+        public static final String SCHEMA_KEYWORD_TRIES_PATH = "C:/Search Engine/Externals/KeywordTries/";
     }
 
     public static final class Messages {
