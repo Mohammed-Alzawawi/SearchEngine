@@ -72,7 +72,7 @@ public class TrieInvertedIndex implements InvertedIndex {
 
     @Override
     public void addField(String schemaName, Map<String, Object> document, String fieldName) throws Exception {
-        TrieNode root = SchemaRoot.getSchemaRoot(schemaName);
+        TrieNode root = SchemaRoot.getInvertedIndexSchemaRoot(schemaName);
         List<Token> tokens = getTokens(schemaName, fieldName, document);
         if (!tokens.isEmpty()) {
             fuzzyTrie.addField((String) document.get(fieldName), schemaName);
@@ -91,7 +91,7 @@ public class TrieInvertedIndex implements InvertedIndex {
 
     @Override
     public void removeField(String schemaName, Map<String, Object> document, String fieldName) throws Exception {
-        TrieNode root = SchemaRoot.getSchemaRoot(schemaName);
+        TrieNode root = SchemaRoot.getInvertedIndexSchemaRoot(schemaName);
         List<Token> tokens = getTokens(schemaName, fieldName, document);
         if (!tokens.isEmpty()) {
             fuzzyTrie.removeField((String) document.get(fieldName), schemaName);
