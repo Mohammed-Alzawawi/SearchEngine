@@ -12,6 +12,7 @@ import com.example.SearchEngine.utils.documentFilter.rangeFilter.PropertiesBSTs;
 import com.example.SearchEngine.utils.storage.FileUtil;
 import com.example.SearchEngine.utils.storage.service.SchemaPathService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
@@ -34,6 +35,8 @@ public class TrieSerialization {
     @Autowired
     private PropertiesBSTs propertiesBSTs;
 
+
+    @Scheduled(fixedRate = 3 * 60 * 60 * 1000)
     public void saveTrie() throws Exception {
         CollectionInfo.save();
         for (String schemaName : FuzzyRoot.roots.keySet()) {
