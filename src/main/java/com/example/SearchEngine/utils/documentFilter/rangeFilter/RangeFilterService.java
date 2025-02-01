@@ -37,8 +37,8 @@ public class RangeFilterService {
                     maxObject = Long.MIN_VALUE;
                 }
             }
-            Long min = (Long) minObject;
-            Long max = (Long) maxObject;
+            Long min = Long.parseLong(minObject.toString());
+            Long max = Long.parseLong(maxObject.toString());
             SortedSet<BSTNode> RangeSubSet = propertyBST.subSet(new BSTNode(min, Long.MIN_VALUE), true, new BSTNode(max, Long.MAX_VALUE), true);
             List<Long> documentsInRange = new ArrayList<>();
             for (BSTNode BSTNode : RangeSubSet) {
