@@ -11,14 +11,14 @@ import java.util.List;
 import java.util.Scanner;
 
 public class StopWordsFilter implements Filter {
-    private static HashSet<String> stopwWords = new HashSet<>();
+    private static HashSet<String> stopWords = new HashSet<>();
 
     public StopWordsFilter() {
-        if (stopwWords.isEmpty()) {
+        if (stopWords.isEmpty()) {
             Resource resource = new ClassPathResource("stopWords.txt");
             try (InputStream inputStream = resource.getInputStream()) {
                 Scanner scanner = new Scanner(inputStream);
-                while (scanner.hasNext()) stopwWords.add(scanner.next());
+                while (scanner.hasNext()) stopWords.add(scanner.next());
             } catch (IOException e) {
                 throw new IllegalStateException() ;
             }
@@ -27,7 +27,7 @@ public class StopWordsFilter implements Filter {
 
     @Override
     public List<Token> filter(Token token) {
-        if (stopwWords.contains(token.getWord())) return null;
+        if (stopWords.contains(token.getWord())) return null;
         return List.of(token);
     }
 }
