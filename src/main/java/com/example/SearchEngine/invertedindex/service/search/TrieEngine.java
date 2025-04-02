@@ -40,7 +40,7 @@ public class TrieEngine implements InvertedIndexEngine {
     @Autowired
     Merger merger;
 
-    private List<Long> gitRelevantDocuments(List<Token> tokens, TrieNode root, String schemaName) {
+    private List<Long> getRelevantDocuments(List<Token> tokens, TrieNode root, String schemaName) {
         HashMap<Long, Double> documentsScores = new HashMap<>();
 
         for (Token token : tokens) {
@@ -77,7 +77,7 @@ public class TrieEngine implements InvertedIndexEngine {
             });
         });
         TrieNode root = SchemaRoot.getInvertedIndexSchemaRoot(schemaName);
-        List<Long> documentsId = gitRelevantDocuments(tokens, root, schemaName);
+        List<Long> documentsId = getRelevantDocuments(tokens, root, schemaName);
         List<Object> relevantDocuments = new ArrayList<>();
         List<Long> filteredDocumentIDs = documentFilterService.getDocuments(schemaName, (HashMap<String, Object>) query.get("filters"));
         Collections.sort(documentsId);
