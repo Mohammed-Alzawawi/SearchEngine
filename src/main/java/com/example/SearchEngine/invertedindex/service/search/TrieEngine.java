@@ -8,8 +8,8 @@ import com.example.SearchEngine.invertedindex.TrieNode;
 import com.example.SearchEngine.invertedindex.service.fuzzysearch.FuzzyTrie;
 import com.example.SearchEngine.invertedindex.service.query.QueryValidator;
 import com.example.SearchEngine.invertedindex.service.ranking.Ranker;
-import com.example.SearchEngine.invertedindex.utility.SchemaAnalyzer;
-import com.example.SearchEngine.schema.util.SchemaRoot;
+import com.example.SearchEngine.invertedindex.utils.SchemaAnalyzer;
+import com.example.SearchEngine.schema.utils.SchemaRoot;
 import com.example.SearchEngine.tokenization.Token;
 import com.example.SearchEngine.utils.documentfilter.DocumentFilterService;
 

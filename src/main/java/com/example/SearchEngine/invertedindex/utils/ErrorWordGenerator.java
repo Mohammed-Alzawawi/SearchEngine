@@ -1,4 +1,4 @@
-package com.example.SearchEngine.invertedindex.utility;
+package com.example.SearchEngine.invertedindex.utils;
 
 import java.util.ArrayList;
 import java.util.List;

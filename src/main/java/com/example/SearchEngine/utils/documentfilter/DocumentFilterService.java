@@ -1,6 +1,6 @@
 package com.example.SearchEngine.utils.documentfilter;
 
-import com.example.SearchEngine.invertedindex.utility.CollectionInfo;
+import com.example.SearchEngine.invertedindex.utils.CollectionInfo;
 import com.example.SearchEngine.utils.documentfilter.matchfilter.MatchFilterService;
 import com.example.SearchEngine.utils.documentfilter.rangefilter.RangeFilterService;
 import org.springframework.beans.factory.annotation.Autowired;

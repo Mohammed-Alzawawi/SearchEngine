@@ -1,4 +1,4 @@
-package com.example.SearchEngine.schema.util;
+package com.example.SearchEngine.schema.utils;
 
 import com.example.SearchEngine.invertedindex.TrieNode;
 import com.example.SearchEngine.utils.documentfilter.matchfilter.KeywordsNode;

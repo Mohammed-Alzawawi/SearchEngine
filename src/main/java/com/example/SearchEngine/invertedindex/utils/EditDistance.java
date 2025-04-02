@@ -1,4 +1,4 @@
-package com.example.SearchEngine.invertedindex.utility;
+package com.example.SearchEngine.invertedindex.utils;
 
 public class EditDistance {
 

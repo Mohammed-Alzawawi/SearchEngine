@@ -1,6 +1,6 @@
 package com.example.SearchEngine.utils.documentfilter.rangefilter;
 
-import com.example.SearchEngine.invertedindex.utility.CollectionInfo;
+import com.example.SearchEngine.invertedindex.utils.CollectionInfo;
 import com.example.SearchEngine.utils.documentfilter.Merger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

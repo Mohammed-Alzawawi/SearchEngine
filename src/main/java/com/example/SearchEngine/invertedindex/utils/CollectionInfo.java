@@ -1,4 +1,4 @@
-package com.example.SearchEngine.invertedindex.utility;
+package com.example.SearchEngine.invertedindex.utils;
 
 import com.example.SearchEngine.constants.Constants;
 import com.example.SearchEngine.tokenization.Token;

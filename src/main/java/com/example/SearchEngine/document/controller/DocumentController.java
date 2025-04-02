@@ -2,7 +2,7 @@ package com.example.SearchEngine.document.controller;
 
 import com.example.SearchEngine.document.service.DocumentStorageService;
 import com.example.SearchEngine.invertedindex.service.search.TrieEngine;
-import com.example.SearchEngine.invertedindex.utility.TrieSerialization;
+import com.example.SearchEngine.invertedindex.utils.TrieSerialization;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;

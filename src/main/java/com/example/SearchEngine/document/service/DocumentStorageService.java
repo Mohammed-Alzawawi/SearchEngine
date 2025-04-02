@@ -2,7 +2,7 @@ package com.example.SearchEngine.document.service;
 
 import com.example.SearchEngine.document.service.validation.DocumentValidator;
 import com.example.SearchEngine.invertedindex.InvertedIndex;
-import com.example.SearchEngine.invertedindex.utility.CollectionInfo;
+import com.example.SearchEngine.invertedindex.utils.CollectionInfo;
 import com.example.SearchEngine.schema.log.Command;
 import com.example.SearchEngine.schema.log.TrieLogService;
 import com.example.SearchEngine.utils.documentfilter.DocumentFilterService;

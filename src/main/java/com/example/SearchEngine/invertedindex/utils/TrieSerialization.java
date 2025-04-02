@@ -1,11 +1,11 @@
-package com.example.SearchEngine.invertedindex.utility;
+package com.example.SearchEngine.invertedindex.utils;
 
 import com.example.SearchEngine.invertedindex.TrieNode;
 import com.example.SearchEngine.invertedindex.service.fuzzysearch.FuzzyNode;
 import com.example.SearchEngine.invertedindex.service.fuzzysearch.FuzzyRoot;
 import com.example.SearchEngine.schema.log.TrieLogLoader;
 import com.example.SearchEngine.schema.log.TrieLogService;
-import com.example.SearchEngine.schema.util.SchemaRoot;
+import com.example.SearchEngine.schema.utils.SchemaRoot;
 import com.example.SearchEngine.utils.documentfilter.DocumentFilterService;
 import com.example.SearchEngine.utils.documentfilter.matchfilter.KeywordsNode;
 import com.example.SearchEngine.utils.documentfilter.rangefilter.PropertiesBSTs;

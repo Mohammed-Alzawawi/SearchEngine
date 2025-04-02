@@ -3,10 +3,10 @@ package com.example.SearchEngine.invertedindex;
 import com.example.SearchEngine.analyzers.Analyzer;
 import com.example.SearchEngine.tokenization.Token;
 import com.example.SearchEngine.invertedindex.service.fuzzysearch.FuzzyTrie;
-import com.example.SearchEngine.invertedindex.utility.CollectionInfo;
-import com.example.SearchEngine.invertedindex.utility.SchemaAnalyzer;
+import com.example.SearchEngine.invertedindex.utils.CollectionInfo;
+import com.example.SearchEngine.invertedindex.utils.SchemaAnalyzer;
 import com.example.SearchEngine.schema.service.SchemaDefaultService;
-import com.example.SearchEngine.schema.util.SchemaRoot;
+import com.example.SearchEngine.schema.utils.SchemaRoot;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
