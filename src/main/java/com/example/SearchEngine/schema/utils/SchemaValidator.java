@@ -1,4 +1,4 @@
-package com.example.SearchEngine.schema.util;
+package com.example.SearchEngine.schema.utils;
 
 import java.io.File;
 import java.io.IOException;
@@ -8,7 +8,7 @@ import com.example.SearchEngine.constants.Constants.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.stereotype.Component;
 
-import static com.example.SearchEngine.schema.util.InstanceChecker.isInstance;
+import static com.example.SearchEngine.schema.utils.InstanceChecker.isInstance;
 
 @Component
 public class SchemaValidator {

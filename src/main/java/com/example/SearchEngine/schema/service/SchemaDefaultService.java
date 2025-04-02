@@ -1,6 +1,6 @@
 package com.example.SearchEngine.schema.service;
 
-import com.example.SearchEngine.schema.util.SchemaValidator;
+import com.example.SearchEngine.schema.utils.SchemaValidator;
 import com.example.SearchEngine.utils.storage.service.SchemaPathService;
 import com.example.SearchEngine.utils.storage.service.SchemaStorageService;
 import com.fasterxml.jackson.databind.JsonNode;

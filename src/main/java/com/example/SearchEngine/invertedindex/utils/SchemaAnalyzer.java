@@ -1,4 +1,4 @@
-package com.example.SearchEngine.invertedindex.utility;
+package com.example.SearchEngine.invertedindex.utils;
 
 import com.example.SearchEngine.analyzers.Analyzer;
 import com.example.SearchEngine.analyzers.AnalyzerEnum;

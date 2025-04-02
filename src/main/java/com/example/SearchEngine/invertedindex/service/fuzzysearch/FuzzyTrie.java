@@ -2,8 +2,8 @@ package com.example.SearchEngine.invertedindex.service.fuzzysearch;
 
 import com.example.SearchEngine.analyzers.AnalyzerEnum;
 import com.example.SearchEngine.tokenization.Token;
-import com.example.SearchEngine.invertedindex.utility.EditDistance;
-import com.example.SearchEngine.invertedindex.utility.ErrorWordGenerator;
+import com.example.SearchEngine.invertedindex.utils.EditDistance;
+import com.example.SearchEngine.invertedindex.utils.ErrorWordGenerator;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;

@@ -1,6 +1,6 @@
 package com.example.SearchEngine.utils.documentfilter.rangefilter;
 
-import com.example.SearchEngine.invertedindex.utility.CollectionInfo;
+import com.example.SearchEngine.invertedindex.utils.CollectionInfo;
 import com.example.SearchEngine.schema.service.SchemaServiceInterface;
 import com.example.SearchEngine.utils.documentfilter.converter.Converter;
 import com.example.SearchEngine.utils.storage.FileUtil;

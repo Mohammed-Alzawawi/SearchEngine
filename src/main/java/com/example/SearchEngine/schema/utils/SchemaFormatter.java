@@ -1,4 +1,4 @@
-package com.example.SearchEngine.schema.util;
+package com.example.SearchEngine.schema.utils;
 
 import com.example.SearchEngine.constants.Constants;
 import com.fasterxml.jackson.databind.ObjectMapper;

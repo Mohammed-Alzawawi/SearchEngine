@@ -1,7 +1,7 @@
 package com.example.SearchEngine.utils.documentfilter.matchfilter;
 
-import com.example.SearchEngine.invertedindex.utility.CollectionInfo;
-import com.example.SearchEngine.schema.util.SchemaRoot;
+import com.example.SearchEngine.invertedindex.utils.CollectionInfo;
+import com.example.SearchEngine.schema.utils.SchemaRoot;
 import com.example.SearchEngine.utils.documentfilter.Merger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

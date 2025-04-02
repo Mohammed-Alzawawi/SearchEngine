@@ -1,6 +1,6 @@
 package com.example.SearchEngine.invertedindex.service.ranking;
 
-import com.example.SearchEngine.invertedindex.utility.CollectionInfo;
+import com.example.SearchEngine.invertedindex.utils.CollectionInfo;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
