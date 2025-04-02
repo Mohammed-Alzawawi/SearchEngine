@@ -1,13 +1,13 @@
 package com.example.SearchEngine.document.service;
 
-import com.example.SearchEngine.document.service.Validation.DocumentValidator;
-import com.example.SearchEngine.invertedIndex.InvertedIndex;
-import com.example.SearchEngine.invertedIndex.utility.CollectionInfo;
+import com.example.SearchEngine.document.service.validation.DocumentValidator;
+import com.example.SearchEngine.invertedindex.InvertedIndex;
+import com.example.SearchEngine.invertedindex.utility.CollectionInfo;
 import com.example.SearchEngine.schema.log.Command;
 import com.example.SearchEngine.schema.log.TrieLogService;
-import com.example.SearchEngine.utils.documentFilter.DocumentFilterService;
-import com.example.SearchEngine.utils.documentFilter.matchFilter.KeywordsTrie;
-import com.example.SearchEngine.utils.documentFilter.rangeFilter.PropertiesBSTs;
+import com.example.SearchEngine.utils.documentfilter.DocumentFilterService;
+import com.example.SearchEngine.utils.documentfilter.matchfilter.KeywordsTrie;
+import com.example.SearchEngine.utils.documentfilter.rangefilter.PropertiesBSTs;
 import com.example.SearchEngine.utils.storage.FileUtil;
 import com.example.SearchEngine.utils.storage.Snowflake;
 import com.example.SearchEngine.utils.storage.service.SchemaPathService;

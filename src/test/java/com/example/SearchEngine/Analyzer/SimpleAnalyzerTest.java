@@ -1,10 +1,10 @@
 package com.example.SearchEngine.Analyzer;
 
-import com.example.SearchEngine.Analyzers.SimpleAnalyzer;
-import com.example.SearchEngine.Filters.LowerCaseFilter;
-import com.example.SearchEngine.Filters.StemmingFilter;
-import com.example.SearchEngine.Filters.StopWordsFilter;
-import com.example.SearchEngine.Tokenization.SimpleTokenizer;
+import com.example.SearchEngine.analyzers.SimpleAnalyzer;
+import com.example.SearchEngine.filters.LowerCaseFilter;
+import com.example.SearchEngine.filters.StemmingFilter;
+import com.example.SearchEngine.filters.StopWordsFilter;
+import com.example.SearchEngine.tokenization.SimpleTokenizer;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

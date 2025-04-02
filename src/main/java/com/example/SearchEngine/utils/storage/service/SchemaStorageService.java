@@ -1,6 +1,6 @@
 package com.example.SearchEngine.utils.storage.service;
 
-import com.example.SearchEngine.Constants.Constants;
+import com.example.SearchEngine.constants.Constants;
 import com.example.SearchEngine.utils.storage.FileUtil;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
