@@ -2,7 +2,7 @@ package com.example.SearchEngine.document.service.validation.fieldsvalidations;
 
 import java.util.List;
 
-public class ItemIntgerValidation implements FieldValidation{
+public class ItemIntegerValidation implements FieldValidation{
     @Override
     public boolean validate(Object object) {
         List<Object> list = (List<Object>) object;

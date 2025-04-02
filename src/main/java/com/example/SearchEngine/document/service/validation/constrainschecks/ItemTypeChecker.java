@@ -9,7 +9,7 @@ public class ItemTypeChecker implements ConstrainChecker {
             case "date":
                 return new ItemDateValidation();
             case "integer":
-                return new ItemIntgerValidation();
+                return new ItemIntegerValidation();
             case "double":
                 return new ItemDoubleValidation();
             case "long":

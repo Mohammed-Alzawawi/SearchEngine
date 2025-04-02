@@ -13,9 +13,9 @@ public class Bm25Ranker implements Ranker {
     private Double Bm25Ranker(Double df, Double tf, Long documentId, String schemaName) {
         Double N = Double.valueOf(CollectionInfo.getNumberOfDocument(schemaName));
         Double documentLength = CollectionInfo.getDocumentLength(schemaName, documentId);
-        Double avgdl = CollectionInfo.getDocumentsTotalLength(schemaName) / N;
+        Double averageDocumentLength = CollectionInfo.getDocumentsTotalLength(schemaName) / N;
         Double idf = Math.log((N - df + 0.5) / (df + 0.5) + 1);
-        Double score = idf * tf * (K + 1) / (tf + K * (1 - B + B * documentLength / avgdl));
+        Double score = idf * tf * (K + 1) / (tf + K * (1 - B + B * documentLength / averageDocumentLength));
         return score;
     }
 

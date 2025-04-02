@@ -8,7 +8,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @Service
 public class Snowflake {
     private static final Map<Long, SnowflakeNode> threadLastData = new ConcurrentHashMap<>();
-    private static final Long defultTimestamp = 1704432000000L;
+    private static final Long defaultTimestamp = 1704432000000L;
     private static final Long maxStep = 12L;
 
     public Long generate(Long threadId){
@@ -36,6 +36,6 @@ public class Snowflake {
     }
 
     private Long getCurrentTimestamp(){
-        return Instant.now().toEpochMilli() - defultTimestamp;
+        return Instant.now().toEpochMilli() - defaultTimestamp;
     }
 }
