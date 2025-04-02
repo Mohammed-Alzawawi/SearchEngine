@@ -1,7 +1,6 @@
 package com.example.SearchEngine.schema.service;
 
 import com.example.SearchEngine.schema.util.SchemaValidator;
-import com.example.SearchEngine.utils.documentFilter.DocumentFilterService;
 import com.example.SearchEngine.utils.storage.service.SchemaPathService;
 import com.example.SearchEngine.utils.storage.service.SchemaStorageService;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -13,7 +12,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Service
 public class SchemaDefaultService implements SchemaServiceInterface {

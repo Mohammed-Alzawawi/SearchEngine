@@ -1,11 +1,11 @@
 package com.example.SearchEngine.schema.log;
 
-import com.example.SearchEngine.Constants.Constants;
+import com.example.SearchEngine.constants.Constants;
 import com.example.SearchEngine.document.service.DocumentStorageService;
-import com.example.SearchEngine.invertedIndex.InvertedIndex;
-import com.example.SearchEngine.utils.documentFilter.DocumentFilterService;
-import com.example.SearchEngine.utils.documentFilter.matchFilter.KeywordsTrie;
-import com.example.SearchEngine.utils.documentFilter.rangeFilter.PropertiesBSTs;
+import com.example.SearchEngine.invertedindex.InvertedIndex;
+import com.example.SearchEngine.utils.documentfilter.DocumentFilterService;
+import com.example.SearchEngine.utils.documentfilter.matchfilter.KeywordsTrie;
+import com.example.SearchEngine.utils.documentfilter.rangefilter.PropertiesBSTs;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

@@ -1,7 +1,7 @@
 package com.example.SearchEngine.schema.util;
 
-import com.example.SearchEngine.invertedIndex.TrieNode;
-import com.example.SearchEngine.utils.documentFilter.matchFilter.KeywordsNode;
+import com.example.SearchEngine.invertedindex.TrieNode;
+import com.example.SearchEngine.utils.documentfilter.matchfilter.KeywordsNode;
 
 import java.util.HashMap;
 

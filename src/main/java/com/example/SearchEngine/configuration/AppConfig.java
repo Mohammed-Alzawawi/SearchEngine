@@ -1,6 +1,6 @@
 package com.example.SearchEngine.configuration;
 
-import com.example.SearchEngine.invertedIndex.utility.TrieSerialization;
+import com.example.SearchEngine.invertedindex.utility.TrieSerialization;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
