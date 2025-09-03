@@ -25,8 +25,8 @@ This project is a **scalable and extensible search engine** built using **Java, 
 
 1. Clone the repository:
    ```sh
-   git clone https://github.com/your-repo/search-engine.git
-   cd search-engine
+   git clone https://github.com/Mohammed-Alzawawi/SearchEngine.git
+   cd SearchEngine
    ```
 2. Build the project:
    ```sh
@@ -115,14 +115,6 @@ Developers can extend the search engine by modifying the **tokenization package*
 
 - Documents are stored in a **file-based system**.
 - Users can **add, update, and delete** their indexed documents.
-
-## License
-
-🚫 **This project does not have an open-source license.**
-
-## Contribution
-
-❌ **Contributions are not allowed for this project.**
 
 ## Quote
 "thenoobestever actually was not the noobest ever". _Mahmoud Alaaraj_
